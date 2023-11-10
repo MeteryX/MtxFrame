@@ -1,6 +1,6 @@
 database:
-  host: "193.135.10.237"
-  port: "3306"
-  user: "dbeaf26adb"
-  password: "dhr422jqhikveh3e7b21cwyud2snoxte"
-  database_name: "dbeaf26adb"
+  host: "...."
+  port: "...."
+  user: "..."
+  password: "...."
+  database_name: "...."
