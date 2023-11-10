@@ -6,6 +6,7 @@ import at.mtxframe.mtxframe.database.DatabaseJobs;
 import at.mtxframe.mtxframe.database.DatabasePlayerStats;
 import at.mtxframe.mtxframe.handlers.DbPlayerStatsHandler;
 import at.mtxframe.mtxframe.messaging.MessageHandler;
+import at.mtxframe.mtxframe.models.LocalPlayerModel;
 import at.mtxframe.mtxframe.models.PlayerJobStatModel;
 import at.mtxframe.mtxframe.models.PlayerStatsModel;
 import at.mtxframe.mtxframe.utilitys.JobsLevelHandler;
@@ -44,7 +45,7 @@ public class BalanceHandler {
 
     //Adding Money to a Player, list of Players, or all Players
     public void addMoneyPlayer(Player player,double amount) throws SQLException {
-
+        HashMap<UUID,LocalPlayerModel>localPlayers = plugin.getLocalPlayerModels();
         Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             long currentTime = System.currentTimeMillis();
             for (UUID playerId : lastBlockBreakTime.keySet()) {
@@ -55,14 +56,17 @@ public class BalanceHandler {
                 }
             }
         }, 0, 20); // Überprüfe alle 20 Ticks (1 Sekunde)
-        PlayerStatsModel stats = dataBase.findPlayerStatDataByUUID(String.valueOf(player.getUniqueId()));
-        BigDecimal balance = BigDecimal.valueOf(stats.getBalance());
+        UUID playerId = player.getUniqueId();
+        LocalPlayerModel localModel = localPlayers.get(playerId);
+        PlayerStatsModel pStats = dataBase.findPlayerStatDataByUUID(String.valueOf(player.getUniqueId()));
+
+        BigDecimal balance = BigDecimal.valueOf(pStats.getBalance());
         BigDecimal additionalAmount = BigDecimal.valueOf(amount);
         BigDecimal newBalance = balance.add(additionalAmount);
+        pStats.setBalance(newBalance.doubleValue());
 
-        stats.setBalance(newBalance.doubleValue());
         // Add the amount to the player's buffer value
-        UUID playerId = player.getUniqueId();
+
         double bufferAmount = balanceBuffer.getOrDefault(playerId, 0.0);
         balanceBuffer.put(playerId, bufferAmount + amount);
 
@@ -70,7 +74,9 @@ public class BalanceHandler {
         DecimalFormat df = new DecimalFormat("#,##0.00");
         String formattedBalance = df.format(newBalance);
 
-        dataBase.updatePlayerStats(stats);
+        localModel.setpStats(pStats);
+        localPlayers.put(playerId,localModel);
+
         msgHandler.actionBarMessage(player, ChatColor.GREEN + "+" + formattedAmount + ChatColor.GOLD + economyUnit + " | " + formattedBalance);
 
     }

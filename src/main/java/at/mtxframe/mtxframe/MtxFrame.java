@@ -3,17 +3,21 @@ package at.mtxframe.mtxframe;
 import at.mtxframe.mtxframe.database.DatabaseConnection;
 import at.mtxframe.mtxframe.gui.ScoreBoard;
 import at.mtxframe.mtxframe.listeners.JoinQuitListener;
+import at.mtxframe.mtxframe.models.LocalPlayerModel;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.UUID;
 
 public final class MtxFrame extends JavaPlugin {
 
     private static MtxFrame plugin;
     public DatabaseConnection database;
+    public HashMap<UUID, LocalPlayerModel> localPlayerModels;
 
     //Tasks
     private BukkitTask taskSB;
@@ -45,7 +49,8 @@ public final class MtxFrame extends JavaPlugin {
         //Listeners
         Bukkit.getPluginManager().registerEvents(new JoinQuitListener(this),this);
 
-
+        //In Memory Initialisierung
+        this.localPlayerModels = new HashMap<>();
     }
 
     @Override
@@ -61,7 +66,13 @@ public final class MtxFrame extends JavaPlugin {
     }
 
 
+    public void setLocalPlayerModels(HashMap<UUID, LocalPlayerModel> localPlayerModels) {
+        this.localPlayerModels = localPlayerModels;
+    }
 
+    public HashMap<UUID,LocalPlayerModel> getLocalPlayerModels(){
+        return localPlayerModels;
+    }
 
 
     public  static  MtxFrame getPlugin(){
