@@ -19,20 +19,23 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.HashMap;
 
 public class JoinQuitListener implements Listener {
-    DatabasePlayerStats database = new DatabasePlayerStats();
+    DatabasePlayerStats database = new DatabasePlayerStats(MtxFrame.getPlugin());
     DatabaseJobs jobsDatabase = new DatabaseJobs();
     Tablist tabList = new Tablist();
+    HashMap<Player,PlayerStatsModel> localPlayerStats;
     MtxFrame plugin;
     public JoinQuitListener(MtxFrame plugin){
         this.plugin = plugin;
     }
-    ScoreBoard scoreBoard = new ScoreBoard();
+    ScoreBoard scoreBoard = new ScoreBoard(MtxFrame.getPlugin());
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) throws SQLException {
         Player p = event.getPlayer();
+        localPlayerStats = plugin.getLocalPlayerStats();
         PersistentDataContainer data = p.getPersistentDataContainer();
         if (!data.has(new NamespacedKey("ultima","playervault"), PersistentDataType.STRING)){
             data.set(new NamespacedKey("ultima","playervault"), PersistentDataType.STRING, "");
@@ -40,6 +43,9 @@ public class JoinQuitListener implements Listener {
         if (!p.hasPlayedBefore()) {
             event.setJoinMessage(ChatColor.GREEN + "Willkommen auf dem Server " + ChatColor.GOLD + p.getName());
             database.createPlayerStats(new PlayerStatsModel(String.valueOf(p.getUniqueId()),0,0,0,00.00, "No Guild", new Date(), new Date()));
+            localPlayerStats = plugin.getLocalPlayerStats();
+            localPlayerStats.put(p,database.findPlayerStatDataByUUID(String.valueOf(p.getUniqueId())));
+            plugin.setLocalPlayerStats(localPlayerStats);
             getPlayerJobStatsFromDatabase(p);
             scoreBoard.setBelowName(p);
         } else {
@@ -47,10 +53,11 @@ public class JoinQuitListener implements Listener {
         event.setJoinMessage(ChatColor.BLUE + p.getName() + ChatColor.GREEN + " +");
 
             try {
+                localPlayerStats = plugin.getLocalPlayerStats();
                 PlayerStatsModel playerStats = getPlayerStatsFromDatabase(p);
-                PlayerJobStatModel jobStats = getPlayerJobStatsFromDatabase(p);
+                localPlayerStats.put(p,playerStats);
+                plugin.setLocalPlayerStats(localPlayerStats);
                 playerStats.setLastLogin(new Date());
-                database.updatePlayerStats(playerStats);
                 scoreBoard.setBelowName(p);
 
                 // scoreboardUI.createScoreboard(event.getPlayer());
@@ -73,8 +80,11 @@ public class JoinQuitListener implements Listener {
         //Bukkit.getOnlinePlayers().forEach(player -> scoreboardUI.updateAllScoreboards(player));
         // }
         try {
-            PlayerStatsModel playerStats = getPlayerStatsFromDatabase(p);
+            localPlayerStats = plugin.getLocalPlayerStats();
+            PlayerStatsModel playerStats = localPlayerStats.get(p);
             playerStats.setLastLogout(new Date());
+            localPlayerStats.remove(p);
+            plugin.setLocalPlayerStats(localPlayerStats);
             database.updatePlayerStats(playerStats);
 
         }catch(SQLException exception){

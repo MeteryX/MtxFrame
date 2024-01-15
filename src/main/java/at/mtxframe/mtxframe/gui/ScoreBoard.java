@@ -12,10 +12,12 @@ import java.sql.SQLException;
 import java.text.DecimalFormat;
 
 public class ScoreBoard implements  Runnable{
-    private  final static ScoreBoard instance = new ScoreBoard();
-    DatabasePlayerStats databaseStats = new DatabasePlayerStats();
+    private  final static ScoreBoard instance = new ScoreBoard(MtxFrame.getPlugin());
+    DatabasePlayerStats databaseStats = new DatabasePlayerStats(MtxFrame.getPlugin());
     String economyUnit = "⛁";
-    public ScoreBoard(){
+    MtxFrame plugin;
+    public ScoreBoard(MtxFrame plugin){
+        this.plugin = plugin;
     }
 
     @Override
@@ -34,7 +36,7 @@ public class ScoreBoard implements  Runnable{
     }
 
     public  void setBelowName(Player player) throws SQLException {
-        PlayerStatsModel stats = databaseStats.findPlayerStatDataByUUID(player.getUniqueId().toString());
+        PlayerStatsModel stats = plugin.getLocalPlayerStats().get(player);
         Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
         Objective objective = scoreboard.registerNewObjective(MtxFrame.getPlugin().getName(), "dummy");
         objective.setDisplaySlot(DisplaySlot.BELOW_NAME);
@@ -47,7 +49,7 @@ public class ScoreBoard implements  Runnable{
     }
 
     private void createNewScoreboard(Player player) throws SQLException {
-        PlayerStatsModel stats = databaseStats.findPlayerStatDataByUUID(player.getUniqueId().toString());
+        PlayerStatsModel stats = plugin.getLocalPlayerStats().get(player);
 
 
         Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
@@ -71,11 +73,13 @@ public class ScoreBoard implements  Runnable{
         teamBalance.setPrefix(ChatColor.GREEN + "" + ChatColor.BOLD + "Geld: ");
         teamBalance.setColor(ChatColor.GOLD);
         Double currentBalance = stats.getBalance();
+
+
         DecimalFormat df = new DecimalFormat("##,###,##0.00");
         String formattedBalance = df.format(currentBalance);
-        String balanceSuffix = formattedBalance + " " + economyUnit;
 
-        teamBalance.setSuffix(balanceSuffix);
+
+        teamBalance.setSuffix(formattedBalance + " " + economyUnit);
         objective.getScore(teamBalanceKey).setScore(0);
 
 
@@ -95,12 +99,19 @@ public class ScoreBoard implements  Runnable{
     }
 
     private void updateScoreboard(Player player) throws SQLException {
-        PlayerStatsModel stats = databaseStats.findPlayerStatDataByUUID(player.getUniqueId().toString());
+        PlayerStatsModel stats = plugin.getLocalPlayerStats().get(player);
 
         Scoreboard scoreboard = player.getScoreboard();
         Team teamBalance = scoreboard.getTeam("Geld");
 
-        teamBalance.setSuffix(String.valueOf(stats.getBalance()));
+        Double currentBalance = stats.getBalance();
+
+
+        DecimalFormat df = new DecimalFormat("##,###,##0.00");
+        String formattedBalance = df.format(currentBalance);
+
+        assert teamBalance != null;
+        teamBalance.setSuffix(formattedBalance + " " + economyUnit);
 
     }
 

@@ -10,13 +10,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class DatabasePlayerStats {
-    MtxFrame plugin = MtxFrame.getPlugin();
-    DatabaseConnection connection = plugin.getDatabaseConnection();
+    MtxFrame plugin;
+    DatabaseConnection connection;
     DbPlayerStatsHandler handler = new DbPlayerStatsHandler();
+    public DatabasePlayerStats(MtxFrame plugin){
+        this.plugin = plugin;
+    }
 
 
     //CRUD- Create, Read, Update, Delete PLAYERS
     public PlayerStatsModel findPlayerStatDataByUUID(String uuid) throws SQLException{
+        connection = plugin.getDatabaseConnection();
 
         PreparedStatement statement = connection.getConnection().prepareStatement(handler.findPlayerStatTrackerData());
         statement.setString(1, uuid);
@@ -47,6 +51,7 @@ public class DatabasePlayerStats {
     public void createPlayerStats(PlayerStatsModel stats) throws SQLException {
         //Die Fragezeichen im preparedStatement (String ist in DataBaseHandler zu finden) werden im folgenden Schritt verarbeitet und mit Daten gefüllt bevor sie
         // auf in die Datenbank geladen und somit gespeichert werden.
+        connection = plugin.getDatabaseConnection();
 
         PreparedStatement statement = connection.getConnection().prepareStatement(handler.createPlayerStatTrackerData());
 
@@ -67,6 +72,7 @@ public class DatabasePlayerStats {
     public void updatePlayerStats(PlayerStatsModel stats) throws SQLException {
         //Die Fragezeichen im preparedStatement (String ist in DataBaseHandler zu finden) werden im folgenden Schritt verarbeitet und mit Daten gefüllt bevor sie
         // auf in die Datenbank geladen und somit gespeichert werden.
+        connection = plugin.getDatabaseConnection();
 
         PreparedStatement statement = connection.getConnection().prepareStatement(handler.updatePlayerStats());
 
@@ -86,6 +92,7 @@ public class DatabasePlayerStats {
     }
 
     public void deletePlayerStats(String uuid) throws SQLException{
+        connection = plugin.getDatabaseConnection();
 
         PreparedStatement statement = connection.getConnection().prepareStatement(handler.deletePlayerStats());
 

@@ -1,5 +1,6 @@
 package at.mtxframe.mtxframe.gui;
 
+import at.mtxframe.mtxframe.MtxFrame;
 import at.mtxframe.mtxframe.database.DatabasePlayerStats;
 import at.mtxframe.mtxframe.models.PlayerStatsModel;
 import org.bukkit.ChatColor;
@@ -8,7 +9,7 @@ import org.bukkit.entity.Player;
 import java.sql.SQLException;
 
 public class Tablist {
-    DatabasePlayerStats database = new DatabasePlayerStats();
+    DatabasePlayerStats database = new DatabasePlayerStats(MtxFrame.getPlugin());
 
     public void setTabList(Player player){
         player.setPlayerListHeader(ChatColor.AQUA + "EridiumRPG.net");

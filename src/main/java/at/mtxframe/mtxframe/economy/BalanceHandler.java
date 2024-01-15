@@ -6,7 +6,6 @@ import at.mtxframe.mtxframe.database.DatabaseJobs;
 import at.mtxframe.mtxframe.database.DatabasePlayerStats;
 import at.mtxframe.mtxframe.handlers.DbPlayerStatsHandler;
 import at.mtxframe.mtxframe.messaging.MessageHandler;
-import at.mtxframe.mtxframe.models.LocalPlayerModel;
 import at.mtxframe.mtxframe.models.PlayerJobStatModel;
 import at.mtxframe.mtxframe.models.PlayerStatsModel;
 import at.mtxframe.mtxframe.utilitys.JobsLevelHandler;
@@ -15,7 +14,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.math.BigDecimal;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.HashMap;
@@ -27,10 +25,12 @@ public class BalanceHandler {
     MtxFrame plugin = MtxFrame.getPlugin();
     DatabaseConnection connection = plugin.getDatabaseConnection();
     DbPlayerStatsHandler handler = new DbPlayerStatsHandler();
-    DatabasePlayerStats dataBase = new DatabasePlayerStats();
+    DatabasePlayerStats dataBase = new DatabasePlayerStats(MtxFrame.getPlugin());
     DatabaseJobs jobsDatabase = new DatabaseJobs();
     MessageHandler msgHandler = new MessageHandler();
     JobsLevelHandler levelHandler = new JobsLevelHandler();
+    HashMap<Player,PlayerStatsModel> localPlayerStats = new HashMap<>();
+
     String economyUnit = " ⛁ ";
     private HashMap<UUID, Double> balanceBuffer = new HashMap<>();
     private HashMap<UUID, Double> xPBuffer = new HashMap<>();
@@ -45,7 +45,7 @@ public class BalanceHandler {
 
     //Adding Money to a Player, list of Players, or all Players
     public void addMoneyPlayer(Player player,double amount) throws SQLException {
-        HashMap<UUID,LocalPlayerModel>localPlayers = plugin.getLocalPlayerModels();
+
         Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             long currentTime = System.currentTimeMillis();
             for (UUID playerId : lastBlockBreakTime.keySet()) {
@@ -57,8 +57,8 @@ public class BalanceHandler {
             }
         }, 0, 20); // Überprüfe alle 20 Ticks (1 Sekunde)
         UUID playerId = player.getUniqueId();
-        LocalPlayerModel localModel = localPlayers.get(playerId);
-        PlayerStatsModel pStats = dataBase.findPlayerStatDataByUUID(String.valueOf(player.getUniqueId()));
+
+        PlayerStatsModel pStats = plugin.getLocalPlayerStats().get(player);
 
         BigDecimal balance = BigDecimal.valueOf(pStats.getBalance());
         BigDecimal additionalAmount = BigDecimal.valueOf(amount);
@@ -74,14 +74,14 @@ public class BalanceHandler {
         DecimalFormat df = new DecimalFormat("#,##0.00");
         String formattedBalance = df.format(newBalance);
 
-        localModel.setpStats(pStats);
-        localPlayers.put(playerId,localModel);
 
         msgHandler.actionBarMessage(player, ChatColor.GREEN + "+" + formattedAmount + ChatColor.GOLD + economyUnit + " | " + formattedBalance);
+        localPlayerStats.put(player,pStats);
+        plugin.setLocalPlayerStats(localPlayerStats);
 
     }
 
-    public void addMoneyAndEXP(Player player,double amount, double xpAmount, String switchStatement) throws SQLException {
+    public void addMoneyAndEXP(Player player,double amount, double xpAmount, String switchStatement,PlayerJobStatModel localJobStats) throws SQLException {
 
         Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             long currentTime = System.currentTimeMillis();
@@ -93,8 +93,7 @@ public class BalanceHandler {
                 }
             }
         }, 0, 20); // Überprüfe alle 20 Ticks (1 Sekunde)
-        PlayerStatsModel stats = dataBase.findPlayerStatDataByUUID(String.valueOf(player.getUniqueId()));
-        PlayerJobStatModel jobStats = jobsDatabase.findJobsDataByUUID(String.valueOf(player.getUniqueId()));
+        PlayerStatsModel stats = plugin.getLocalPlayerStats().get(player);
 
         BigDecimal balance = BigDecimal.valueOf(stats.getBalance());
         BigDecimal additionalAmount = BigDecimal.valueOf(amount);
@@ -120,91 +119,91 @@ public class BalanceHandler {
         switch (switchStatement) {
             //Add xp to players buffer amount
             case "mining": {
-                currentXP = BigDecimal.valueOf(jobStats.getMiningXP());
-                percentage = (currentXP.doubleValue() / levels.get(jobStats.getMiningLevel()) * 100);
-                jobStats.setMiningXP(currentXP.add(BigDecimal.valueOf(xpAmount)).doubleValue());
+                currentXP = BigDecimal.valueOf(localJobStats.getMiningXP());
+                percentage = (currentXP.doubleValue() / levels.get(localJobStats.getMiningLevel()) * 100);
+                localJobStats.setMiningXP(currentXP.add(BigDecimal.valueOf(xpAmount)).doubleValue());
                 xPBuffer.put(playerId, xPBufferAmount + xpAmount);
-                if (levelHandler.isLevelUp(jobStats.getMiningLevel(), currentXP.doubleValue())){
+                if (levelHandler.isLevelUp(localJobStats.getMiningLevel(), currentXP.doubleValue())){
                     msgHandler.titleMessageJobs(player,ChatColor.BLUE + "Miner", ChatColor.GOLD + "Dein Miner Level ist gestiegen.");
-                    jobStats.setMiningLevel(jobStats.getWoodcutterLevel() + 1);
-                    jobStats.setMiningXP(00.00);
+                    localJobStats.setMiningLevel(localJobStats.getWoodcutterLevel() + 1);
+                    localJobStats.setMiningXP(00.00);
                     //TODO: Title Messages für levelUps
-                    player.sendMessage("Du bist im Miner Level gestiegen! Aktuelles Level: " + jobStats.getMiningLevel());
+                    player.sendMessage("Du bist im Miner Level gestiegen! Aktuelles Level: " + localJobStats.getMiningLevel());
                 }
-                jobsDatabase.updatePlayerJobStats(jobStats);
+
                 break;
             }
             case "farming": {
-                currentXP = BigDecimal.valueOf(jobStats.getFarmerXP());
-                percentage = (currentXP.doubleValue() / levels.get(jobStats.getFarmerLevel()) * 100);
-                jobStats.setFarmerXP(currentXP.add(BigDecimal.valueOf(xpAmount)).doubleValue());
+                currentXP = BigDecimal.valueOf(localJobStats.getFarmerXP());
+                percentage = (currentXP.doubleValue() / levels.get(localJobStats.getFarmerLevel()) * 100);
+                localJobStats.setFarmerXP(currentXP.add(BigDecimal.valueOf(xpAmount)).doubleValue());
                 xPBuffer.put(playerId, xPBufferAmount + xpAmount);
-                if (levelHandler.isLevelUp(jobStats.getFarmerLevel(), currentXP.doubleValue())){
+                if (levelHandler.isLevelUp(localJobStats.getFarmerLevel(), currentXP.doubleValue())){
                     msgHandler.titleMessageJobs(player,ChatColor.GREEN + "Farmer", ChatColor.GOLD + "Dein Farmer Level ist gestiegen.");
-                    jobStats.setWoodcutterLevel(jobStats.getFarmerLevel() + 1);
-                    jobStats.setFarmerXP(00.00);
+                    localJobStats.setWoodcutterLevel(localJobStats.getFarmerLevel() + 1);
+                    localJobStats.setFarmerXP(00.00);
                     //TODO: Title Messages für levelUps
-                    player.sendMessage("Du bist im Farmer Level gestiegen! Aktuelles Level: " + jobStats.getFarmerLevel());
+                    player.sendMessage("Du bist im Farmer Level gestiegen! Aktuelles Level: " + localJobStats.getFarmerLevel());
                 }
-                jobsDatabase.updatePlayerJobStats(jobStats);
+
                 break;
             }
             case "hunting": {
-                currentXP = BigDecimal.valueOf(jobStats.getHunterXP());
-                percentage = (currentXP.doubleValue() / levels.get(jobStats.getHunterLevel()) * 100);
-                jobStats.setHunterXP(currentXP.add(BigDecimal.valueOf(xpAmount)).doubleValue());
+                currentXP = BigDecimal.valueOf(localJobStats.getHunterXP());
+                percentage = (currentXP.doubleValue() / levels.get(localJobStats.getHunterLevel()) * 100);
+                localJobStats.setHunterXP(currentXP.add(BigDecimal.valueOf(xpAmount)).doubleValue());
                 xPBuffer.put(playerId, xPBufferAmount + xpAmount);
-                if (levelHandler.isLevelUp(jobStats.getHunterLevel(), currentXP.doubleValue())){
+                if (levelHandler.isLevelUp(localJobStats.getHunterLevel(), currentXP.doubleValue())){
                     msgHandler.titleMessageJobs(player,ChatColor.RED + "Jäger", ChatColor.GOLD + "Dein Jäger Level ist gestiegen.");
-                    jobStats.setHunterLevel(jobStats.getHunterLevel() + 1);
-                    jobStats.setHunterXP(00.00);
+                    localJobStats.setHunterLevel(localJobStats.getHunterLevel() + 1);
+                    localJobStats.setHunterXP(00.00);
                     //TODO: Title Messages für levelUps
-                    player.sendMessage("Du bist im Jäger Level gestiegen! Aktuelles Level: " + jobStats.getHunterLevel());
+                    player.sendMessage("Du bist im Jäger Level gestiegen! Aktuelles Level: " + localJobStats.getHunterLevel());
                 }
-                jobsDatabase.updatePlayerJobStats(jobStats);
 
                 break;
             }
             case "woodcutting": {
-                currentXP = BigDecimal.valueOf(jobStats.getWoodcutterXP());
-                percentage = (currentXP.doubleValue() / levels.get(jobStats.getWoodcutterLevel()) * 100);
-                jobStats.setWoodcutterXP(currentXP.add(BigDecimal.valueOf(xpAmount)).doubleValue());
+                currentXP = BigDecimal.valueOf(localJobStats.getWoodcutterXP());
+                percentage = (currentXP.doubleValue() / levels.get(localJobStats.getWoodcutterLevel()) * 100);
+                localJobStats.setWoodcutterXP(currentXP.add(BigDecimal.valueOf(xpAmount)).doubleValue());
                 xPBuffer.put(playerId, xPBufferAmount + xpAmount);
-                if (levelHandler.isLevelUp(jobStats.getWoodcutterLevel(), currentXP.doubleValue())){
+                if (levelHandler.isLevelUp(localJobStats.getWoodcutterLevel(), currentXP.doubleValue())){
                     msgHandler.titleMessageJobs(player,ChatColor.DARK_GREEN + "Holzfäller", ChatColor.GOLD + "Dein Holzfäller Level ist gestiegen.");
-                    jobStats.setWoodcutterLevel(jobStats.getWoodcutterLevel() + 1);
-                    jobStats.setWoodcutterXP(00.00);
+                    localJobStats.setWoodcutterLevel(localJobStats.getWoodcutterLevel() + 1);
+                    localJobStats.setWoodcutterXP(00.00);
                     //TODO: Title Messages für levelUps
-                    player.sendMessage("Du bist im Holzfäller Level gestiegen! Aktuelles Level: " + jobStats.getWoodcutterLevel());
+                    player.sendMessage("Du bist im Holzfäller Level gestiegen! Aktuelles Level: " + localJobStats.getWoodcutterLevel());
                 }
-
-                jobsDatabase.updatePlayerJobStats(jobStats);
 
                 break;
             }
             case "fishing": {
-                currentXP = BigDecimal.valueOf(jobStats.getFisherXP());
-                percentage = (currentXP.doubleValue() / levels.get(jobStats.getFisherLevel()) * 100);
-                jobStats.setFisherXP(currentXP.add(BigDecimal.valueOf(xpAmount)).doubleValue());
+                currentXP = BigDecimal.valueOf(localJobStats.getFisherXP());
+                percentage = (currentXP.doubleValue() / levels.get(localJobStats.getFisherLevel()) * 100);
+                localJobStats.setFisherXP(currentXP.add(BigDecimal.valueOf(xpAmount)).doubleValue());
                 xPBuffer.put(playerId, xPBufferAmount + xpAmount);
-                if (levelHandler.isLevelUp(jobStats.getWoodcutterLevel(), currentXP.doubleValue())){
+                if (levelHandler.isLevelUp(localJobStats.getWoodcutterLevel(), currentXP.doubleValue())){
                     msgHandler.titleMessageJobs(player,ChatColor.AQUA + "Fischer", ChatColor.GOLD + "Dein Fischer Level ist gestiegen.");
-                    jobStats.setFisherLevel(jobStats.getFisherLevel() + 1);
-                    jobStats.setFisherXP(00.00);
+                    localJobStats.setFisherLevel(localJobStats.getFisherLevel() + 1);
+                    localJobStats.setFisherXP(00.00);
                     //TODO: Title Messages für levelUps
-                    player.sendMessage("Du bist im Fischer Level gestiegen! Aktuelles Level: " + jobStats.getFisherLevel());
+                    player.sendMessage("Du bist im Fischer Level gestiegen! Aktuelles Level: " + localJobStats.getFisherLevel());
                 }
-                jobsDatabase.updatePlayerJobStats(jobStats);
                 break;
 
             }
         }
 
         String formattedNeededXP = String.format("%.2f", percentage);
-        dataBase.updatePlayerStats(stats);
+
+
+        //dataBase.updatePlayerStats(stats);
+        localPlayerStats.put(player,stats);
+        plugin.setLocalPlayerStats(localPlayerStats);
 
         //TODO: nach den kummulierten sammel XP Prozentzahl der gebrauchten JobXP zum nächsten Level anzeigen
-        msgHandler.actionBarMessage(player, ChatColor.GREEN + "+" + formattedAmount + ChatColor.GOLD + economyUnit + ChatColor.GRAY + " | " + ChatColor.GOLD + formattedBalance + ChatColor.GRAY + " | " + ChatColor.BLUE + formattedXp + " XP" + ChatColor.GRAY + " | " + ChatColor.DARK_PURPLE + formattedNeededXP + "%");
+        msgHandler.actionBarMessage(player, ChatColor.GREEN + "+" + formattedAmount + ChatColor.GOLD + economyUnit + ChatColor.GRAY + " | " + ChatColor.GOLD + formattedBalance + ChatColor.GOLD + economyUnit + ChatColor.GRAY + " | " + ChatColor.BLUE + formattedXp + " XP" + ChatColor.GRAY + " | " + ChatColor.DARK_PURPLE + formattedNeededXP + "%");
 
     }
 
@@ -309,8 +308,8 @@ public class BalanceHandler {
 
     //Sending and receiving Money between 2 Players
     public void sendMoney(Player sender, Player receiver, double amount) throws SQLException {
-        PlayerStatsModel statsSender = dataBase.findPlayerStatDataByUUID(String.valueOf(sender.getUniqueId()));
-        PlayerStatsModel statsReceiver = dataBase.findPlayerStatDataByUUID(String.valueOf(receiver.getUniqueId()));
+        PlayerStatsModel statsSender = plugin.getLocalPlayerStats().get(sender);
+        PlayerStatsModel statsReceiver = plugin.getLocalPlayerStats().get(receiver);
         if (statsSender.getBalance() >= amount){
             String formattedAmount = String.format("%.2f", amount);
             String formattedBalanceS = String.format("%.2f", statsSender.getBalance());

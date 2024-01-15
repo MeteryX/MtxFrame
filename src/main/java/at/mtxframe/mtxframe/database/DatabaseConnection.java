@@ -9,14 +9,17 @@ import java.sql.Statement;
 
 public class DatabaseConnection {
     private Connection connection;
-    MtxFrame plugin = (MtxFrame) MtxFrame.getPlugin();
+    MtxFrame plugin;
+
     private final String HOST;
     private final String PORT;
     private final String USER;
     private final String PASSWORD;
     private final String DATABASE_NAME;
 
+
     public DatabaseConnection(String host, String port, String user, String password, String databaseName) {
+        plugin = MtxFrame.getPlugin();
         HOST = host;
         PORT = port;
         USER = user;
@@ -32,11 +35,13 @@ public class DatabaseConnection {
         }
             //Database connection Variablen Abgleich
             //Veränderbar in der configDatei
+
             String url = "jdbc:mysql://" + this.HOST + ":" + this.PORT + "/" + this.DATABASE_NAME;
             Connection connection = DriverManager.getConnection(url, this.USER, this.PASSWORD);
             this.connection = connection;
-            plugin.cLog("Verbindung zur Datenbank erfolgreich.");
-
+            if (plugin != null) {
+                plugin.cLog("Verbindung zur Datenbank erfolgreich.");
+            }
             return this.connection;
 
     }
