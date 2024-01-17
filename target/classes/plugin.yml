@@ -3,3 +3,12 @@ version: '1.0'
 main: at.mtxframe.mtxframe.MtxFrame
 api-version: '1.20'
 load: STARTUP
+author: MeteryX
+depend:
+  - PlotSquared
+
+commands:
+  itemtest:
+    usage: /itemtest
+    aliases:
+      - citem

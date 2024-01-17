@@ -2,15 +2,17 @@ package at.mtxframe.mtxframe;
 
 import at.mtxframe.mtxframe.database.DatabaseConnection;
 import at.mtxframe.mtxframe.database.DatabasePlayerStats;
+import at.mtxframe.mtxframe.debugcommands.DebugCustomItem;
 import at.mtxframe.mtxframe.gui.ScoreBoard;
+import at.mtxframe.mtxframe.listeners.CustomItemListener;
 import at.mtxframe.mtxframe.listeners.JoinQuitListener;
 import at.mtxframe.mtxframe.models.PlayerStatsModel;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +24,8 @@ public final class MtxFrame extends JavaPlugin {
     DatabasePlayerStats dbStats = new DatabasePlayerStats(this);
 
     public HashMap<Player, PlayerStatsModel> localPlayerStats;
+    //VAULT
+
 
     //Tasks
     private BukkitTask taskSB;
@@ -46,15 +50,26 @@ public final class MtxFrame extends JavaPlugin {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        //Vault Hooks
+
         //Tasks
         //Scoreboard task
         taskSB = getServer().getScheduler().runTaskTimer(this, ScoreBoard.getInstance(), 0, 20);
 
         //Listeners
         Bukkit.getPluginManager().registerEvents(new JoinQuitListener(this),this);
+        Bukkit.getPluginManager().registerEvents(new CustomItemListener(this),this);
+
+        //Command registration
+        getCommand("itemtest").setExecutor(new DebugCustomItem());
 
         //In Memory Initialisierung
         this.localPlayerStats = new HashMap<>();
+
+
+
+        //Shedulers/Runnables
+
 
 
 
@@ -81,12 +96,14 @@ public final class MtxFrame extends JavaPlugin {
         }
 
         if (taskSB != null && !taskSB.isCancelled()){
-        taskSB.cancel();
+            taskSB.cancel();
         }
 
 
     }
 
+
+    //VAULT
 
 
     public HashMap<Player, PlayerStatsModel> getLocalPlayerStats() {
@@ -104,6 +121,7 @@ public final class MtxFrame extends JavaPlugin {
         return database;
     }
 
+    //Getters und Setters Listener
 
 
 
@@ -123,3 +141,4 @@ public final class MtxFrame extends JavaPlugin {
 
 
 }
+

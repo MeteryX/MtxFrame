@@ -1,7 +1,6 @@
 package at.mtxframe.mtxframe.database;
 
 import at.mtxframe.mtxframe.MtxFrame;
-import at.mtxframe.mtxframe.handlers.DbPlayerStatsHandler;
 import at.mtxframe.mtxframe.handlers.DbVaultsHandler;
 
 import java.sql.PreparedStatement;

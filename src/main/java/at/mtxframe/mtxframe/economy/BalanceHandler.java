@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-public class BalanceHandler {
+public class BalanceHandler{
 
     MtxFrame plugin = MtxFrame.getPlugin();
     DatabaseConnection connection = plugin.getDatabaseConnection();
@@ -32,12 +32,15 @@ public class BalanceHandler {
     HashMap<Player,PlayerStatsModel> localPlayerStats = new HashMap<>();
 
     String economyUnit = " ⛁ ";
+    //BUFFERS UND TIMER
     private HashMap<UUID, Double> balanceBuffer = new HashMap<>();
     private HashMap<UUID, Double> xPBuffer = new HashMap<>();
     public static HashMap<UUID, Long> lastBlockBreakTime = new HashMap<>();
     public HashMap<UUID, Long> getLastBlockBreakTime() {
         return lastBlockBreakTime;
     }
+
+    //VAULT
 
     public void setLastBlockBreakTime(HashMap<UUID, Long> lastBlockBreakTime) {
         BalanceHandler.lastBlockBreakTime = lastBlockBreakTime;
@@ -194,29 +197,13 @@ public class BalanceHandler {
 
             }
         }
-
         String formattedNeededXP = String.format("%.2f", percentage);
-
-
         //dataBase.updatePlayerStats(stats);
         localPlayerStats.put(player,stats);
         plugin.setLocalPlayerStats(localPlayerStats);
-
-        //TODO: nach den kummulierten sammel XP Prozentzahl der gebrauchten JobXP zum nächsten Level anzeigen
         msgHandler.actionBarMessage(player, ChatColor.GREEN + "+" + formattedAmount + ChatColor.GOLD + economyUnit + ChatColor.GRAY + " | " + ChatColor.GOLD + formattedBalance + ChatColor.GOLD + economyUnit + ChatColor.GRAY + " | " + ChatColor.BLUE + formattedXp + " XP" + ChatColor.GRAY + " | " + ChatColor.DARK_PURPLE + formattedNeededXP + "%");
 
     }
-
-
-
-
-
-
-
-
-
-
-
 
 
     public void addMoneyPlayerList(List<Player> playerList, double amount) throws SQLException {
@@ -248,12 +235,15 @@ public class BalanceHandler {
 
     //Removing Money drom a Player, list of Players, or all Players
     public void removeMoneyPlayer(Player player,double amount) throws SQLException {
-        PlayerStatsModel stats = dataBase.findPlayerStatDataByUUID(String.valueOf(player.getUniqueId()));
+        PlayerStatsModel stats = plugin.getLocalPlayerStats().get(player);
         if (stats.getBalance() >= amount) {
             stats.setBalance((stats.getBalance()) - amount);
             String formattedAmount = String.format("%.2f", amount);
             String formattedBalance = String.format("%.2f", stats.getBalance());
             dataBase.updatePlayerStats(stats);
+            localPlayerStats = plugin.getLocalPlayerStats();
+            localPlayerStats.put(player,stats);
+            plugin.setLocalPlayerStats(localPlayerStats);
             msgHandler.economyMessage(player, "Es wurden " + ChatColor.RED + formattedAmount + ChatColor.GOLD + economyUnit + ChatColor.GRAY + "von deinem konto entfernt.");
             msgHandler.actionBarMessage(player, ChatColor.RED + "-" + formattedAmount + ChatColor.GOLD + economyUnit + " | " + formattedBalance);
         } else {
@@ -261,6 +251,9 @@ public class BalanceHandler {
             String formattedAmount = String.format("%.2f", amount);
             String formattedBalance = String.format("%.2f", stats.getBalance());
             dataBase.updatePlayerStats(stats);
+            localPlayerStats = plugin.getLocalPlayerStats();
+            localPlayerStats.put(player,stats);
+            plugin.setLocalPlayerStats(localPlayerStats);
             msgHandler.economyMessage(player, "Es wurden " + ChatColor.RED + formattedAmount + ChatColor.GOLD + economyUnit + ChatColor.GRAY + "von deinem konto entfernt.");
             msgHandler.actionBarMessage(player, ChatColor.RED + "-" + formattedAmount + ChatColor.GOLD + economyUnit + " | " + formattedBalance);
         }
@@ -316,9 +309,14 @@ public class BalanceHandler {
             statsSender.setBalance((statsSender.getBalance()-amount));
             msgHandler.economyMessage(sender, "Du hast " + ChatColor.GREEN + formattedAmount + ChatColor.GOLD + economyUnit + ChatColor.GRAY + "an " + ChatColor.AQUA + receiver.getName() + ChatColor.GRAY + " gezahlt.");
             dataBase.updatePlayerStats(statsSender);
+            localPlayerStats = plugin.getLocalPlayerStats();
+            localPlayerStats.put(sender,statsSender);
             msgHandler.actionBarMessage(sender, ChatColor.RED + "-" + formattedAmount + ChatColor.GOLD + economyUnit + " | " + formattedBalanceS);
             statsReceiver.setBalance((statsReceiver.getBalance())+amount);
             dataBase.updatePlayerStats(statsReceiver);
+            localPlayerStats = plugin.getLocalPlayerStats();
+            localPlayerStats.put(receiver,statsReceiver);
+            plugin.setLocalPlayerStats(localPlayerStats);
             String formattedAmountR = String.format("%.2f", amount);
             String formattedBalanceR = String.format("%.2f", statsReceiver.getBalance());
             msgHandler.actionBarMessage(receiver, ChatColor.GREEN + "+" + formattedAmountR + ChatColor.GOLD + economyUnit + " | " + formattedBalanceR);
@@ -328,8 +326,6 @@ public class BalanceHandler {
         }
 
     }
-
-
 
 
 }

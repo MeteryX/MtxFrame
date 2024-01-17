@@ -1,11 +1,9 @@
 package at.mtxframe.mtxframe.utilitys;
 
-import at.mtxframe.mtxframe.MtxFrame;
 import at.mtxframe.mtxframe.database.DatabaseVaults;
 import at.mtxframe.mtxframe.handlers.DbVaultsHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
-import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;

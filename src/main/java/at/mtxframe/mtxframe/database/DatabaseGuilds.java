@@ -2,7 +2,6 @@ package at.mtxframe.mtxframe.database;
 
 import at.mtxframe.mtxframe.MtxFrame;
 import at.mtxframe.mtxframe.handlers.DbGuildsHandler;
-import at.mtxframe.mtxframe.handlers.DbPlayerStatsHandler;
 import at.mtxframe.mtxframe.models.GuildsModel;
 
 import java.sql.Date;
