@@ -36,59 +36,66 @@ public class CustomItemListener implements Listener {
     public void onBlockBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
         ItemStack usedItem = event.getPlayer().getInventory().getItemInMainHand();
-        PersistentDataContainer persistentData = Objects.requireNonNull(usedItem.getItemMeta()).getPersistentDataContainer();
-        if (persistentData != null) {
-            if (persistentData.has(ItemKeys.CUSTOM_TEST, PersistentDataType.BOOLEAN)) {
-                player.sendMessage("Custom Item genutzt");
-                //TODO: Random Drop Logik anpassen auf cases um es übersichtlicher zu machen
+        if (usedItem != null) {
+            PersistentDataContainer persistentData = Objects.requireNonNull(usedItem.getItemMeta()).getPersistentDataContainer();
+            if (persistentData != null) {
+                if (persistentData.has(ItemKeys.CUSTOM_TEST, PersistentDataType.BOOLEAN)) {
+                    player.sendMessage("Custom Item genutzt");
+                    //TODO: Random Drop Logik anpassen auf cases um es übersichtlicher zu machen
 
-                //Drops Listen usw
-                if (persistentData.has(ItemKeys.CI_RANDOM_DROP, PersistentDataType.STRING)) {
-                    if (persistentData.has(ItemKeys.CI_RD_TESTDROPS, PersistentDataType.STRING)) {
-                        ArrayList<ItemStack> debugDropList = new ArrayList<>();
-                        ItemStack stoneDrop = new ItemStack(Material.STONE);
-                        debugDropList.add(stoneDrop);
-                        player.getInventory().addItem(stoneDrop);
+                    //Drops Listen usw
+                    if (persistentData.has(ItemKeys.CI_RANDOM_DROP, PersistentDataType.STRING)) {
+                        if (persistentData.has(ItemKeys.CI_RD_TESTDROPS, PersistentDataType.STRING)) {
+                            ArrayList<ItemStack> debugDropList = new ArrayList<>();
+                            ItemStack stoneDrop = new ItemStack(Material.STONE);
+                            debugDropList.add(stoneDrop);
+                            player.getInventory().addItem(stoneDrop);
+
+                        }
+                    }
+                    //Tracker Werte
+                    if (persistentData.has(ItemKeys.CI_TRACKER, PersistentDataType.STRING)) {
+
+                        int currentTrackerValue = getStatValue(usedItem);
+                        ItemMeta itemMeta = setStatValue(usedItem, currentTrackerValue);
+                        ArrayList<String> lore = (ArrayList<String>) itemMeta.getLore();
+                        assert lore != null;
+                        lore.set(4, ChatColor.GRAY + "Abgebaut: " + ChatColor.GREEN + (currentTrackerValue));
+                        if (itemMeta != null) {
+                            usedItem.getItemMeta().getLore().clear();
+                            itemMeta.setLore(lore);
+                        }
+                        usedItem.setItemMeta(itemMeta);
 
                     }
-                }
-                //Tracker Werte
-                if (persistentData.has(ItemKeys.CI_TRACKER, PersistentDataType.STRING)) {
-
-                    int currentTrackerValue = getStatValue(usedItem);
-                    ItemMeta itemMeta = setStatValue(usedItem,currentTrackerValue);
-                    ArrayList<String> lore = (ArrayList<String>) itemMeta.getLore();
-                    assert lore != null;
-                    lore.set(4, ChatColor.GRAY + "Abgebaut: " + ChatColor.GREEN + (currentTrackerValue));
-                    if (itemMeta != null) {
-                        usedItem.getItemMeta().getLore().clear();
-                        itemMeta.setLore(lore);
-                    }
-                    usedItem.setItemMeta(itemMeta);
 
                 }
 
+            } else {
+                player.sendMessage("Persistant Data on Item is null");
             }
-
-        }else {
-            player.sendMessage("Persistant Data on Item is null");
         }
-    }
-    public int getStatValue(ItemStack itemStack){
-        ItemMeta itemMeta = itemStack.getItemMeta();
-        PersistentDataContainer pdc = itemMeta.getPersistentDataContainer();
-
-        return pdc.get(ItemKeys.CI_TRACKER_VALUE, PersistentDataType.INTEGER);
-    }
-    public ItemMeta setStatValue(ItemStack item, int value){
-        ItemMeta itemMeta = item.getItemMeta();
-        PersistentDataContainer pdc = itemMeta.getPersistentDataContainer();
-        int currentStat = value;
-        int incrementedStat = currentStat+1;
-        pdc.set(ItemKeys.CI_TRACKER_VALUE,PersistentDataType.INTEGER,incrementedStat);
-        return itemMeta;
 
     }
+
+
+
+
+        public int getStatValue (ItemStack itemStack){
+            ItemMeta itemMeta = itemStack.getItemMeta();
+            PersistentDataContainer pdc = itemMeta.getPersistentDataContainer();
+
+            return pdc.get(ItemKeys.CI_TRACKER_VALUE, PersistentDataType.INTEGER);
+        }
+        public ItemMeta setStatValue (ItemStack item,int value){
+            ItemMeta itemMeta = item.getItemMeta();
+            PersistentDataContainer pdc = itemMeta.getPersistentDataContainer();
+            int currentStat = value;
+            int incrementedStat = currentStat + 1;
+            pdc.set(ItemKeys.CI_TRACKER_VALUE, PersistentDataType.INTEGER, incrementedStat);
+            return itemMeta;
+
+        }
 
 
     //andere Events

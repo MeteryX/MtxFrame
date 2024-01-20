@@ -2,10 +2,10 @@ name: MtxFrame
 version: '1.0'
 main: at.mtxframe.mtxframe.MtxFrame
 api-version: '1.20'
-load: STARTUP
+load: POSTWORLD
 author: MeteryX
 depend:
-  - PlotSquared
+  - Vault
 
 commands:
   itemtest:

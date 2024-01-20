@@ -26,5 +26,6 @@ at\mtxframe\mtxframe\models\PlayerStatsModel.class
 at\mtxframe\mtxframe\database\DatabasePlayerStats.class
 at\mtxframe\mtxframe\gui\ScoreBoard.class
 at\mtxframe\mtxframe\database\DatabaseGuilds.class
+at\mtxframe\mtxframe\gui\MenuManager.class
 at\mtxframe\mtxframe\database\DatabaseConnection.class
 at\mtxframe\mtxframe\listeners\CustomItemListener.class

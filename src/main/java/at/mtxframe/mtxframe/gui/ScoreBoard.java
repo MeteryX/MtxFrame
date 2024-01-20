@@ -58,10 +58,10 @@ public class ScoreBoard implements  Runnable{
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
         objective.setDisplayName(ChatColor.GOLD + "" + ChatColor.BOLD + "EridiumRPG");
 
-        Score score = objective.getScore(ChatColor.BLUE + "" + ChatColor.BOLD + "Name: ");
-        Score name = objective.getScore(ChatColor.WHITE + player.getDisplayName());
-        Score score1 = objective.getScore(ChatColor.BLUE + "" + ChatColor.BOLD +  "Gilde: ");
-        Score guild = objective.getScore(ChatColor.WHITE + stats.getPlayerGuild());
+        Score score = objective.getScore(ChatColor.GRAY + "▪ " + ChatColor.DARK_AQUA + "" + ChatColor.BOLD + "Name: ");
+        Score name = objective.getScore(ChatColor.GRAY + "  ▸ " + ChatColor.GRAY + player.getDisplayName());
+        Score score1 = objective.getScore(ChatColor.GRAY + "▪ " + ChatColor.DARK_AQUA + "" + ChatColor.BOLD +  "Gilde: ");
+        Score guild = objective.getScore(ChatColor.GRAY + "  ▸ " + ChatColor.GRAY + stats.getPlayerGuild());
         Score empty2 = objective.getScore(ChatColor.GRAY + " ");
         //Score score3 = objective.getScore(ChatColor.GREEN + "Geld: ");
         //Score score4 = objective.getScore( ChatColor.WHITE + String.valueOf(stats.getBalance()));
@@ -70,7 +70,7 @@ public class ScoreBoard implements  Runnable{
         Team teamBalance = scoreboard.registerNewTeam("Geld");
         String teamBalanceKey = ChatColor.GOLD.toString();
         teamBalance.addEntry(teamBalanceKey);
-        teamBalance.setPrefix(ChatColor.GREEN + "" + ChatColor.BOLD + "Geld: ");
+        teamBalance.setPrefix(ChatColor.GRAY + "▪ " + ChatColor.GREEN + "" + ChatColor.BOLD + "Geld: \n");
         teamBalance.setColor(ChatColor.GOLD);
         Double currentBalance = stats.getBalance();
 

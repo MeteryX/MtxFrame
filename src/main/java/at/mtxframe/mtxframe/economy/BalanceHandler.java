@@ -9,8 +9,11 @@ import at.mtxframe.mtxframe.messaging.MessageHandler;
 import at.mtxframe.mtxframe.models.PlayerJobStatModel;
 import at.mtxframe.mtxframe.models.PlayerStatsModel;
 import at.mtxframe.mtxframe.utilitys.JobsLevelHandler;
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.math.BigDecimal;
@@ -48,6 +51,8 @@ public class BalanceHandler{
 
     //Adding Money to a Player, list of Players, or all Players
     public void addMoneyPlayer(Player player,double amount) throws SQLException {
+        Economy eco = plugin.getEco();
+        OfflinePlayer offlinePlayer = Bukkit.getServer().getOfflinePlayer(player.getUniqueId());
 
         Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             long currentTime = System.currentTimeMillis();
@@ -81,6 +86,8 @@ public class BalanceHandler{
         msgHandler.actionBarMessage(player, ChatColor.GREEN + "+" + formattedAmount + ChatColor.GOLD + economyUnit + " | " + formattedBalance);
         localPlayerStats.put(player,pStats);
         plugin.setLocalPlayerStats(localPlayerStats);
+        eco.depositPlayer(offlinePlayer,amount);
+
 
     }
 
@@ -203,6 +210,8 @@ public class BalanceHandler{
         plugin.setLocalPlayerStats(localPlayerStats);
         msgHandler.actionBarMessage(player, ChatColor.GREEN + "+" + formattedAmount + ChatColor.GOLD + economyUnit + ChatColor.GRAY + " | " + ChatColor.GOLD + formattedBalance + ChatColor.GOLD + economyUnit + ChatColor.GRAY + " | " + ChatColor.BLUE + formattedXp + " XP" + ChatColor.GRAY + " | " + ChatColor.DARK_PURPLE + formattedNeededXP + "%");
 
+
+
     }
 
 
@@ -219,6 +228,7 @@ public class BalanceHandler{
                 String formattedBalance = String.format("%.2f", newBalance.doubleValue());
                 dataBase.updatePlayerStats(stats);
                 msgHandler.actionBarMessage(player, ChatColor.GREEN + "+" + formattedAmount + ChatColor.GOLD + economyUnit + " | " + formattedBalance);
+
             }
         }
     }
@@ -230,6 +240,7 @@ public class BalanceHandler{
             String formattedBalance = String.format("%.2f", stats.getBalance());
             dataBase.updatePlayerStats(stats);
             msgHandler.actionBarMessage(player, ChatColor.GREEN + "+" + formattedAmount + ChatColor.GOLD + economyUnit + " | " + formattedBalance);
+
         }
     }
 
@@ -246,6 +257,7 @@ public class BalanceHandler{
             plugin.setLocalPlayerStats(localPlayerStats);
             msgHandler.economyMessage(player, "Es wurden " + ChatColor.RED + formattedAmount + ChatColor.GOLD + economyUnit + ChatColor.GRAY + "von deinem konto entfernt.");
             msgHandler.actionBarMessage(player, ChatColor.RED + "-" + formattedAmount + ChatColor.GOLD + economyUnit + " | " + formattedBalance);
+
         } else {
             stats.setBalance(0);
             String formattedAmount = String.format("%.2f", amount);
@@ -256,6 +268,7 @@ public class BalanceHandler{
             plugin.setLocalPlayerStats(localPlayerStats);
             msgHandler.economyMessage(player, "Es wurden " + ChatColor.RED + formattedAmount + ChatColor.GOLD + economyUnit + ChatColor.GRAY + "von deinem konto entfernt.");
             msgHandler.actionBarMessage(player, ChatColor.RED + "-" + formattedAmount + ChatColor.GOLD + economyUnit + " | " + formattedBalance);
+
         }
     }
     public void removeMoneyPlayerList(List<Player> playerList, double amount) throws SQLException {
@@ -268,6 +281,7 @@ public class BalanceHandler{
                 dataBase.updatePlayerStats(stats);
                 msgHandler.economyMessage(player, "Es wurden " + ChatColor.RED + formattedAmount + ChatColor.GOLD + economyUnit + ChatColor.GRAY + "von deinem konto entfernt.");
                 msgHandler.actionBarMessage(player, ChatColor.RED + "-" + formattedAmount + ChatColor.GOLD + economyUnit + " | " + formattedBalance);
+
             } else {
                 stats.setBalance(0);
                 String formattedAmount = String.format("%.2f", amount);
@@ -275,6 +289,7 @@ public class BalanceHandler{
                 dataBase.updatePlayerStats(stats);
                 msgHandler.economyMessage(player, "Es wurden " + ChatColor.RED + formattedAmount + ChatColor.GOLD + economyUnit + ChatColor.GRAY + "von deinem konto entfernt.");
                 msgHandler.actionBarMessage(player, ChatColor.RED + "-" + formattedAmount + ChatColor.GOLD + economyUnit + " | " + formattedBalance);
+
             }
         }
     }
@@ -288,6 +303,7 @@ public class BalanceHandler{
                 dataBase.updatePlayerStats(stats);
                 msgHandler.economyMessage(player, "Es wurden " + ChatColor.RED + formattedAmount + ChatColor.GOLD + economyUnit + ChatColor.GRAY + "von deinem konto entfernt.");
                 msgHandler.actionBarMessage(player, ChatColor.RED + "-" + formattedAmount + ChatColor.GOLD + economyUnit + " | " + formattedBalance);
+
             } else {
                 stats.setBalance(0);
                 String formattedAmount = String.format("%.2f", amount);
@@ -295,6 +311,7 @@ public class BalanceHandler{
                 dataBase.updatePlayerStats(stats);
                 msgHandler.economyMessage(player, "Es wurden " + ChatColor.RED + formattedAmount + ChatColor.GOLD + economyUnit + ChatColor.GRAY + "von deinem konto entfernt.");
                 msgHandler.actionBarMessage(player, ChatColor.RED + "-" + formattedAmount + ChatColor.GOLD + economyUnit + " | " + formattedBalance);
+
             }
         }
     }
@@ -311,8 +328,11 @@ public class BalanceHandler{
             dataBase.updatePlayerStats(statsSender);
             localPlayerStats = plugin.getLocalPlayerStats();
             localPlayerStats.put(sender,statsSender);
+
+
             msgHandler.actionBarMessage(sender, ChatColor.RED + "-" + formattedAmount + ChatColor.GOLD + economyUnit + " | " + formattedBalanceS);
             statsReceiver.setBalance((statsReceiver.getBalance())+amount);
+
             dataBase.updatePlayerStats(statsReceiver);
             localPlayerStats = plugin.getLocalPlayerStats();
             localPlayerStats.put(receiver,statsReceiver);
@@ -326,6 +346,8 @@ public class BalanceHandler{
         }
 
     }
+
+
 
 
 }

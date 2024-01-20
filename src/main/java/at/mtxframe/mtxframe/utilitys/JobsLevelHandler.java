@@ -8,8 +8,6 @@ public class JobsLevelHandler {
     public  HashMap<Integer,Long> minerAbilityCooldown = new HashMap<>();
     HashMap<Integer,Double> dropChances = new HashMap<>();
     public HashMap<Integer, Double> getDropChances() {
-
-
         dropChances.put(1, 00.05*1 );
         dropChances.put(2, 00.05*2 );
         dropChances.put(3, 00.05*3 );

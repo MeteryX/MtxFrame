@@ -3,11 +3,13 @@ package at.mtxframe.mtxframe;
 import at.mtxframe.mtxframe.database.DatabaseConnection;
 import at.mtxframe.mtxframe.database.DatabasePlayerStats;
 import at.mtxframe.mtxframe.debugcommands.DebugCustomItem;
+import at.mtxframe.mtxframe.economy.BalanceHandler;
 import at.mtxframe.mtxframe.gui.ScoreBoard;
 import at.mtxframe.mtxframe.listeners.CustomItemListener;
 import at.mtxframe.mtxframe.listeners.JoinQuitListener;
 import at.mtxframe.mtxframe.models.PlayerStatsModel;
 
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -25,10 +27,11 @@ public final class MtxFrame extends JavaPlugin {
 
     public HashMap<Player, PlayerStatsModel> localPlayerStats;
     //VAULT
-
+    private static Economy eco = null;
 
     //Tasks
     private BukkitTask taskSB;
+    public BalanceHandler balanceHandler;
 
     @Override
     public void onEnable() {
@@ -52,6 +55,7 @@ public final class MtxFrame extends JavaPlugin {
         }
         //Vault Hooks
 
+
         //Tasks
         //Scoreboard task
         taskSB = getServer().getScheduler().runTaskTimer(this, ScoreBoard.getInstance(), 0, 20);
@@ -70,6 +74,10 @@ public final class MtxFrame extends JavaPlugin {
 
         //Shedulers/Runnables
 
+        //VAULT
+
+
+
 
 
 
@@ -80,7 +88,7 @@ public final class MtxFrame extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
-        cLog("MtxFramework gestoppt.");
+        cWarning("MtxFramework gestoppt.");
         for (Map.Entry<Player, PlayerStatsModel> entry : localPlayerStats.entrySet()) {
             Player player = entry.getKey();
             PlayerStatsModel playerStatModel = entry.getValue();
@@ -104,6 +112,9 @@ public final class MtxFrame extends JavaPlugin {
 
 
     //VAULT
+    public Economy getEco(){
+        return eco;
+    }
 
 
     public HashMap<Player, PlayerStatsModel> getLocalPlayerStats() {
