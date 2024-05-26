@@ -1,5 +1,7 @@
 package at.mtxframe.mtxframe.debugcommands;
 
+import at.mtxframe.mtxframe.MtxFrame;
+import at.mtxframe.mtxframe.colors.format.ColorFormat;
 import at.mtxframe.mtxframe.customitems.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -13,14 +15,19 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 public class DebugCustomItem implements CommandExecutor {
+    MtxFrame plugin = MtxFrame.getPlugin();
+    private ColorFormat colorFormat = new ColorFormat(plugin.getColorAPI());
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         if (sender instanceof Player){
             Player player = (Player) sender;
             ItemStack customItem = new ItemStack(Material.DIAMOND_PICKAXE);
-            String itemName = ChatColor.BOLD + "" + ChatColor.BLUE + "Custom Item Test";
+            String itemName = "Tracker Item Test";
+            String formattedItemName = colorFormat.formatText("&Z" + itemName);
+
+
             ItemMeta itemMeta = customItem.getItemMeta();
-            itemMeta.setDisplayName(itemName);
+            itemMeta.setDisplayName(formattedItemName);
             Boolean hasEffect = true;
             ItemEffectHandler itemEffect = new ItemEffectHandler();
             Boolean isStatTracker = true;

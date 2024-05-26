@@ -135,7 +135,7 @@ public class BalanceHandler{
                 xPBuffer.put(playerId, xPBufferAmount + xpAmount);
                 if (levelHandler.isLevelUp(localJobStats.getMiningLevel(), currentXP.doubleValue())){
                     msgHandler.titleMessageJobs(player,ChatColor.BLUE + "Miner", ChatColor.GOLD + "Dein Miner Level ist gestiegen.");
-                    localJobStats.setMiningLevel(localJobStats.getWoodcutterLevel() + 1);
+                    localJobStats.setMiningLevel(localJobStats.getMiningLevel() + 1);
                     localJobStats.setMiningXP(00.00);
                     //TODO: Title Messages für levelUps
                     player.sendMessage("Du bist im Miner Level gestiegen! Aktuelles Level: " + localJobStats.getMiningLevel());

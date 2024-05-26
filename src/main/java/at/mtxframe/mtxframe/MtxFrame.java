@@ -1,17 +1,26 @@
 package at.mtxframe.mtxframe;
 
+import at.mtxframe.mtxframe.colors.ColorAPI;
+import at.mtxframe.mtxframe.colors.commands.ColorCommands;
+import at.mtxframe.mtxframe.colors.signs.SignColorListener;
+import at.mtxframe.mtxframe.crates.TestCrateCommand;
 import at.mtxframe.mtxframe.database.DatabaseConnection;
 import at.mtxframe.mtxframe.database.DatabasePlayerStats;
 import at.mtxframe.mtxframe.debugcommands.DebugCustomItem;
 import at.mtxframe.mtxframe.economy.BalanceHandler;
+import at.mtxframe.mtxframe.files.ChatFilterConfig;
 import at.mtxframe.mtxframe.gui.ScoreBoard;
 import at.mtxframe.mtxframe.listeners.CustomItemListener;
 import at.mtxframe.mtxframe.listeners.JoinQuitListener;
 import at.mtxframe.mtxframe.models.PlayerStatsModel;
 
+import at.mtxframe.mtxframe.penalites.ChatListener;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -32,6 +41,10 @@ public final class MtxFrame extends JavaPlugin {
     //Tasks
     private BukkitTask taskSB;
     public BalanceHandler balanceHandler;
+    //ColorAPi
+    public ColorAPI colorAPI;
+
+
 
     @Override
     public void onEnable() {
@@ -53,8 +66,16 @@ public final class MtxFrame extends JavaPlugin {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        //Vault Hooks
+        //Penalties
+        ChatFilterConfig.setup();
+        ChatFilterConfig.get().options().copyDefaults(true);
+        ChatFilterConfig.save();
 
+        //ColorAPI
+        colorAPI = new ColorAPI(this);
+        getServer().getServicesManager().register(ColorAPI.class, colorAPI, this, ServicePriority.High);
+        //HolographicDisplays
+        //ProtocolLib
 
         //Tasks
         //Scoreboard task
@@ -63,24 +84,19 @@ public final class MtxFrame extends JavaPlugin {
         //Listeners
         Bukkit.getPluginManager().registerEvents(new JoinQuitListener(this),this);
         Bukkit.getPluginManager().registerEvents(new CustomItemListener(this),this);
+        Bukkit.getPluginManager().registerEvents(new ChatListener(),this);
+        Bukkit.getPluginManager().registerEvents(new SignColorListener(),this);
 
         //Command registration
         getCommand("itemtest").setExecutor(new DebugCustomItem());
+        getCommand("colorapi").setExecutor(new ColorCommands(this));
+        getCommand("cratetest").setExecutor(new TestCrateCommand(this));
 
         //In Memory Initialisierung
         this.localPlayerStats = new HashMap<>();
 
 
-
         //Shedulers/Runnables
-
-        //VAULT
-
-
-
-
-
-
 
         cLog("MtxFramework gestartet.");
     }
@@ -99,9 +115,10 @@ public final class MtxFrame extends JavaPlugin {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-
             // Optional: Hier kannst du weitere Operationen für jeden Spieler durchführen, falls nötig
         }
+        //ColorAPI
+        getServer().getServicesManager().unregister(this.colorAPI);
 
         if (taskSB != null && !taskSB.isCancelled()){
             taskSB.cancel();
@@ -110,6 +127,14 @@ public final class MtxFrame extends JavaPlugin {
 
     }
 
+    //Reload Plugin
+    public void reloadPlugin(){
+        colorAPI = new ColorAPI(this);
+    }
+
+    public ColorAPI getColorAPI() {
+        return colorAPI;
+    }
 
     //VAULT
     public Economy getEco(){

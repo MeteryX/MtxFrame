@@ -4,11 +4,36 @@ main: at.mtxframe.mtxframe.MtxFrame
 api-version: '1.20'
 load: POSTWORLD
 author: MeteryX
-depend:
-  - Vault
+
+
+permissions:
+  colorapi.reload:
+    description: Allows you to reload ColorAPI plugin
+    default: op
+  colorapi.*:
+    description: Wildcard permission
+    default: op
+    children:
+      - colorapi.reload: true
+  signs.color:
+    description: Allows Players to use ColorCodes on signs
+    default: op
+  crate.open:
+    description: allow players to open crates
+    default: op
 
 commands:
   itemtest:
     usage: /itemtest
     aliases:
       - citem
+  colorapi:
+    subcommands:
+      reload:
+        description: Reload ColorAPI plugin
+        usage: /<command> reload
+        permission: colorapi.reload
+  cratetest:
+    usage: /cratestest
+    aliases:
+      - crate

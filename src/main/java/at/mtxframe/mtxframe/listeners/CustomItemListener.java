@@ -40,7 +40,6 @@ public class CustomItemListener implements Listener {
             PersistentDataContainer persistentData = Objects.requireNonNull(usedItem.getItemMeta()).getPersistentDataContainer();
             if (persistentData != null) {
                 if (persistentData.has(ItemKeys.CUSTOM_TEST, PersistentDataType.BOOLEAN)) {
-                    player.sendMessage("Custom Item genutzt");
                     //TODO: Random Drop Logik anpassen auf cases um es übersichtlicher zu machen
 
                     //Drops Listen usw

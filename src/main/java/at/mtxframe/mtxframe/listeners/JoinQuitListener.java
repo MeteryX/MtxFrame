@@ -1,6 +1,7 @@
 package at.mtxframe.mtxframe.listeners;
 
 import at.mtxframe.mtxframe.MtxFrame;
+import at.mtxframe.mtxframe.afk.AFKManager;
 import at.mtxframe.mtxframe.database.DatabaseJobs;
 import at.mtxframe.mtxframe.database.DatabasePlayerStats;
 import at.mtxframe.mtxframe.gui.ScoreBoard;
@@ -13,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
@@ -22,6 +24,9 @@ import java.util.Date;
 import java.util.HashMap;
 
 public class JoinQuitListener implements Listener {
+
+    //AFK handling wird ebenfalls im PlayerJoinQuitListener geregelt
+
     DatabasePlayerStats database = new DatabasePlayerStats(MtxFrame.getPlugin());
     DatabaseJobs jobsDatabase = new DatabaseJobs();
     Tablist tabList = new Tablist();
@@ -29,8 +34,11 @@ public class JoinQuitListener implements Listener {
     MtxFrame plugin;
     public JoinQuitListener(MtxFrame plugin){
         this.plugin = plugin;
+        this.localPlayerStats = plugin.getLocalPlayerStats();
     }
     ScoreBoard scoreBoard = new ScoreBoard(MtxFrame.getPlugin());
+
+
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) throws SQLException {
@@ -43,7 +51,6 @@ public class JoinQuitListener implements Listener {
         if (!p.hasPlayedBefore()) {
             event.setJoinMessage(ChatColor.GREEN + "Willkommen auf dem Server " + ChatColor.GOLD + p.getName());
             database.createPlayerStats(new PlayerStatsModel(String.valueOf(p.getUniqueId()),0,0,0,00.00, "No Guild", new Date(), new Date()));
-            localPlayerStats = plugin.getLocalPlayerStats();
             localPlayerStats.put(p,database.findPlayerStatDataByUUID(String.valueOf(p.getUniqueId())));
             plugin.setLocalPlayerStats(localPlayerStats);
             getPlayerJobStatsFromDatabase(p);
@@ -53,7 +60,6 @@ public class JoinQuitListener implements Listener {
         event.setJoinMessage(ChatColor.BLUE + p.getName() + ChatColor.GREEN + " +");
 
             try {
-                localPlayerStats = plugin.getLocalPlayerStats();
                 PlayerStatsModel playerStats = getPlayerStatsFromDatabase(p);
                 localPlayerStats.put(p,playerStats);
                 plugin.setLocalPlayerStats(localPlayerStats);
@@ -80,7 +86,6 @@ public class JoinQuitListener implements Listener {
         //Bukkit.getOnlinePlayers().forEach(player -> scoreboardUI.updateAllScoreboards(player));
         // }
         try {
-            localPlayerStats = plugin.getLocalPlayerStats();
             PlayerStatsModel playerStats = localPlayerStats.get(p);
             playerStats.setLastLogout(new Date());
             localPlayerStats.remove(p);
@@ -94,6 +99,7 @@ public class JoinQuitListener implements Listener {
         }
 
     }
+
 
     private PlayerStatsModel getPlayerStatsFromDatabase(Player p) throws SQLException{
         PlayerStatsModel stats = database.findPlayerStatDataByUUID(p.getUniqueId().toString());
