@@ -38,11 +38,11 @@ colors:
 
 gradients:
   X:
-    color1: "#FF0000" # Red
-    color2: "#00FF00" # Green
+    color1: "#952d2d" # Purple
+    color2: "#36275c" # DarkBlue
   Y:
-    color1: "#0000FF" # Blue
-    color2: "#FFFF00" # Yellow
+    color1: "#cb3d0e" # Red-Orange
+    color2: "#cc861b" # Orange
   Z:
     color1: "#FF00FF" # Magenta
     color2: "#00FFFF" # Cyan
