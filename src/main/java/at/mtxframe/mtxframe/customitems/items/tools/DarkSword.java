@@ -1,8 +1,9 @@
-package at.mtxframe.mtxframe.customitems.tools;
+package at.mtxframe.mtxframe.customitems.items.tools;
 
 import at.mtxframe.mtxframe.MtxFrame;
 import at.mtxframe.mtxframe.colors.format.ColorFormat;
 import at.mtxframe.mtxframe.customitems.*;
+import at.mtxframe.mtxframe.customitems.items.ItemModel;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

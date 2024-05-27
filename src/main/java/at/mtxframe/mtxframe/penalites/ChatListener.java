@@ -30,7 +30,7 @@ public class ChatListener implements Listener {
         }
 
         String newMessage = colorAPI.translateColorCodes(message);
-        event.setMessage(newMessage);
+        event.setMessage(ChatColor.translateAlternateColorCodes('&',newMessage));
 
     }
 

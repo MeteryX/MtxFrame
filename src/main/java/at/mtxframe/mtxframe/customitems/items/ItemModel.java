@@ -1,5 +1,6 @@
-package at.mtxframe.mtxframe.customitems;
+package at.mtxframe.mtxframe.customitems.items;
 
+import at.mtxframe.mtxframe.customitems.*;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

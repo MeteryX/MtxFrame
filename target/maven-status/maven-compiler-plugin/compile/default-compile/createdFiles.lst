@@ -1,6 +1,7 @@
 at\mtxframe\mtxframe\handlers\DbVaultsHandler.class
 at\mtxframe\mtxframe\penalites\ReportGUI.class
 at\mtxframe\mtxframe\models\GuildsModel.class
+at\mtxframe\mtxframe\customitems\items\tools\DarkSword.class
 at\mtxframe\mtxframe\colors\signs\SignColorListener.class
 at\mtxframe\mtxframe\crates\TestCrateCommand$1.class
 at\mtxframe\mtxframe\customitems\ItemKeys.class
@@ -37,10 +38,12 @@ at\mtxframe\mtxframe\handlers\DbClaimsHandler.class
 at\mtxframe\mtxframe\customitems\ItemTrackingHandler.class
 at\mtxframe\mtxframe\files\ChatFilterConfig.class
 at\mtxframe\mtxframe\models\PlayerJobStatModel.class
+at\mtxframe\mtxframe\customitems\items\ItemModel.class
 at\mtxframe\mtxframe\afk\AfkCommand.class
 at\mtxframe\mtxframe\colors\ColorAPI.class
 at\mtxframe\mtxframe\colors\format\Utils.class
-at\mtxframe\mtxframe\customitems\ItemModel.class
+at\mtxframe\mtxframe\ranking\RankManager.class
+at\mtxframe\mtxframe\ranking\Ranks.class
 at\mtxframe\mtxframe\database\DatabaseJobs.class
 at\mtxframe\mtxframe\database\DatabasePlayerStats.class
 at\mtxframe\mtxframe\files\ChatFilterManager.class

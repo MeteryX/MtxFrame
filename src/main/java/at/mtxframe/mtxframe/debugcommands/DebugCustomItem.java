@@ -3,7 +3,7 @@ package at.mtxframe.mtxframe.debugcommands;
 import at.mtxframe.mtxframe.MtxFrame;
 import at.mtxframe.mtxframe.colors.format.ColorFormat;
 import at.mtxframe.mtxframe.customitems.*;
-import org.bukkit.ChatColor;
+import at.mtxframe.mtxframe.customitems.items.ItemModel;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

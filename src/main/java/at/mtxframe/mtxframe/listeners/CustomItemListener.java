@@ -2,7 +2,9 @@ package at.mtxframe.mtxframe.listeners;
 
 
 import at.mtxframe.mtxframe.MtxFrame;
+import at.mtxframe.mtxframe.colors.format.ColorFormat;
 import at.mtxframe.mtxframe.customitems.ItemKeys;
+import at.mtxframe.mtxframe.messaging.MessageHandler;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -30,12 +32,17 @@ public class CustomItemListener implements Listener {
     public CustomItemListener(MtxFrame plugin){
         this.plugin = plugin;
     }
+    MessageHandler msgHandler = new MessageHandler();
+
 
     //BlockBreakListener
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
+        ColorFormat colorFormat = new ColorFormat(plugin.getColorAPI());
         Player player = event.getPlayer();
         ItemStack usedItem = event.getPlayer().getInventory().getItemInMainHand();
+
+
         if (usedItem != null) {
             PersistentDataContainer persistentData = Objects.requireNonNull(usedItem.getItemMeta()).getPersistentDataContainer();
             if (persistentData != null) {
@@ -47,6 +54,10 @@ public class CustomItemListener implements Listener {
                         if (persistentData.has(ItemKeys.CI_RD_TESTDROPS, PersistentDataType.STRING)) {
                             ArrayList<ItemStack> debugDropList = new ArrayList<>();
                             ItemStack stoneDrop = new ItemStack(Material.STONE);
+                            String dropType = colorFormat.formatText("&X Dunkler Drop");
+                            String formattedDropMessage = colorFormat.formatText("&X__________");
+                            msgHandler.titleMessageDrop(player, dropType,ChatColor.translateAlternateColorCodes('&', "&4&k__ ") + formattedDropMessage + ChatColor.translateAlternateColorCodes('&', " &4&k__"));
+
                             debugDropList.add(stoneDrop);
                             player.getInventory().addItem(stoneDrop);
 
@@ -54,7 +65,6 @@ public class CustomItemListener implements Listener {
                     }
                     //Tracker Werte
                     if (persistentData.has(ItemKeys.CI_TRACKER, PersistentDataType.STRING)) {
-
                         int currentTrackerValue = getStatValue(usedItem);
                         ItemMeta itemMeta = setStatValue(usedItem, currentTrackerValue);
                         ArrayList<String> lore = (ArrayList<String>) itemMeta.getLore();
