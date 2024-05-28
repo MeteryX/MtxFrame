@@ -3,6 +3,7 @@ package at.mtxframe.mtxframe.listeners;
 
 import at.mtxframe.mtxframe.MtxFrame;
 import at.mtxframe.mtxframe.colors.format.ColorFormat;
+import at.mtxframe.mtxframe.customitems.DroplistDarkDrop;
 import at.mtxframe.mtxframe.customitems.ItemKeys;
 import at.mtxframe.mtxframe.messaging.MessageHandler;
 import org.bukkit.*;
@@ -16,10 +17,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class CustomItemListener implements Listener {
     //Variablen
@@ -27,7 +25,6 @@ public class CustomItemListener implements Listener {
 
     public HashMap<Location,Material> tempLocations = new HashMap<>();
     ArrayList<Location> locationArray = new ArrayList<>();
-    private static final int RESET_DISTANCE = 5;
     MtxFrame plugin;
     public CustomItemListener(MtxFrame plugin){
         this.plugin = plugin;
@@ -49,20 +46,22 @@ public class CustomItemListener implements Listener {
                 if (persistentData.has(ItemKeys.CUSTOM_TEST, PersistentDataType.BOOLEAN)) {
                     //TODO: Random Drop Logik anpassen auf cases um es übersichtlicher zu machen
 
-                    //Drops Listen usw
+                    //Check ob das Item einen Random Droptable beinhaltet und ob ein Drop stattfindet
                     if (persistentData.has(ItemKeys.CI_RANDOM_DROP, PersistentDataType.STRING)) {
-                        if (persistentData.has(ItemKeys.CI_RD_TESTDROPS, PersistentDataType.STRING)) {
-                            ArrayList<ItemStack> debugDropList = new ArrayList<>();
-                            ItemStack stoneDrop = new ItemStack(Material.STONE);
-                            String dropType = colorFormat.formatText("&X Dunkler Drop");
-                            String formattedDropMessage = colorFormat.formatText("&X__________");
-                            msgHandler.titleMessageDrop(player, dropType,ChatColor.translateAlternateColorCodes('&', "&4&k__ ") + formattedDropMessage + ChatColor.translateAlternateColorCodes('&', " &4&k__"));
+                        if (persistentData.has(ItemKeys.CI_DROP_DARK, PersistentDataType.STRING)) {
+                            //Todo: Andere droparten abfragen und mehr als nur dark drop implementieren
+                            if (isDrop()){
+                                String dropType = colorFormat.formatText("&X Dunkler Drop");
+                                String formattedDropMessage = colorFormat.formatText("&X__________");
+                                msgHandler.titleMessageDrop(player, dropType,ChatColor.translateAlternateColorCodes('&', "&4&k__ ") + formattedDropMessage + ChatColor.translateAlternateColorCodes('&', " &4&k__"));
 
-                            debugDropList.add(stoneDrop);
-                            player.getInventory().addItem(stoneDrop);
+                                player.getInventory().addItem(DroplistDarkDrop.getDropItem());
+                            }
 
                         }
                     }
+
+
                     //Tracker Werte
                     if (persistentData.has(ItemKeys.CI_TRACKER, PersistentDataType.STRING)) {
                         int currentTrackerValue = getStatValue(usedItem);
@@ -106,8 +105,16 @@ public class CustomItemListener implements Listener {
 
         }
 
-
-    //andere Events
+        //Check for random Drop
+        public boolean isDrop(){
+            Random random = new Random();
+            int randomIndex = random.nextInt(100);
+            if(randomIndex < 20){
+                return true;
+            } else {
+                return false;
+            }
+        }
 
 
 

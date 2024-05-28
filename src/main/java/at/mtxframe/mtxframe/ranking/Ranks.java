@@ -21,6 +21,6 @@ public enum Ranks {
     public String getPrefix() {
         return prefix;
     }
-
+    
 
 }

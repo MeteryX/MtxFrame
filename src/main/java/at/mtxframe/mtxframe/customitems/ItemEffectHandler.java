@@ -9,11 +9,6 @@ public class ItemEffectHandler {
 
 
 
-
-
-
-
-
     //Getters und Setter für Placeholder/itemEffect
     public String getItemEffect() {
         return itemEffect;
