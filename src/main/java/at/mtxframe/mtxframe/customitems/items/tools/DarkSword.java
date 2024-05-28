@@ -15,8 +15,8 @@ public class DarkSword {
     private MtxFrame plugin = MtxFrame.getPlugin();
     private ColorFormat colorFormat = new ColorFormat(plugin.getColorAPI());
 
-    public void createItem(Player player, ItemStack itemStack){
-        ItemStack customItem = new ItemStack(Material.DIAMOND_PICKAXE);
+    public void createItem(Player player){
+        ItemStack customItem = new ItemStack(Material.NETHERITE_SWORD);
         String itemName = "Schwert der Dunkelheit";
         String formattedItemName = colorFormat.formatText("&X" + itemName);
 
@@ -25,7 +25,7 @@ public class DarkSword {
         itemMeta.setDisplayName(formattedItemName);
         Boolean hasEffect = true;
         ItemEffectHandler itemEffect = new ItemEffectHandler();
-        Boolean isStatTracker = true;
+        Boolean isStatTracker = false;
         ItemTrackingHandler trackedStat = new ItemTrackingHandler();
         trackedStat.setTrackingType(trackedStat.getWoodTracker());
         Boolean hasRandomDrops = true;
@@ -36,8 +36,7 @@ public class DarkSword {
 
         persistentDataContainer.set(ItemKeys.CUSTOM_TEST, PersistentDataType.STRING, ItemKeys.CUSTOM_TEST.getKey());
         persistentDataContainer.set(ItemKeys.CI_RANDOM_DROP,PersistentDataType.STRING,ItemKeys.CI_RANDOM_DROP.getKey());
-        persistentDataContainer.set(ItemKeys.CI_RD_TESTDROPS,PersistentDataType.STRING,ItemKeys.CI_RD_TESTDROPS.getKey());
-        persistentDataContainer.set(ItemKeys.CI_TRACKER,PersistentDataType.STRING,ItemKeys.CI_TRACKER.getKey());
+        persistentDataContainer.set(ItemKeys.CI_DROP_DARK,PersistentDataType.STRING,ItemKeys.CI_DROP_DARK.getKey());
 
 
         ItemModel customItemModel = new ItemModel(customItem,itemName,itemMeta,hasEffect,itemEffect,isStatTracker,trackedStat,hasRandomDrops,randomDrops,dropChance,persistentDataContainer);

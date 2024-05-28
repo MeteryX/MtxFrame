@@ -4,6 +4,7 @@ import at.mtxframe.mtxframe.MtxFrame;
 import at.mtxframe.mtxframe.colors.format.ColorFormat;
 import at.mtxframe.mtxframe.customitems.*;
 import at.mtxframe.mtxframe.customitems.items.ItemModel;
+import at.mtxframe.mtxframe.customitems.items.tools.DarkSword;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -47,7 +48,8 @@ public class DebugCustomItem implements CommandExecutor {
 
             ItemModel customItemModel = new ItemModel(customItem,itemName,itemMeta,hasEffect,itemEffect,isStatTracker,trackedStat,hasRandomDrops,randomDrops,dropChance,persistentDataContainer);
             customItemModel.createItemTest(player, 1);
-
+            DarkSword darkSword = new DarkSword();
+            darkSword.createItem(player);
 
         }
 
