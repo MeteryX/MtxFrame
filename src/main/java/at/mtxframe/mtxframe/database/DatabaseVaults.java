@@ -1,7 +1,7 @@
 package at.mtxframe.mtxframe.database;
 
 import at.mtxframe.mtxframe.MtxFrame;
-import at.mtxframe.mtxframe.handlers.DbVaultsHandler;
+import at.mtxframe.mtxframe.database.handlers.DbVaultsHandler;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

@@ -1,4 +1,4 @@
-package at.mtxframe.mtxframe.handlers;
+package at.mtxframe.mtxframe.database.handlers;
 
 public class DbVaultsHandler {
     //guild Vaults

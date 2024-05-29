@@ -1,7 +1,7 @@
 package at.mtxframe.mtxframe.database;
 
 import at.mtxframe.mtxframe.MtxFrame;
-import at.mtxframe.mtxframe.handlers.DbPlayerStatsHandler;
+import at.mtxframe.mtxframe.database.handlers.DbPlayerStatsHandler;
 import at.mtxframe.mtxframe.models.PlayerStatsModel;
 
 import java.sql.Date;

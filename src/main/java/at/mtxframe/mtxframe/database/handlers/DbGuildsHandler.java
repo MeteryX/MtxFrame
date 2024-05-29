@@ -1,4 +1,4 @@
-package at.mtxframe.mtxframe.handlers;
+package at.mtxframe.mtxframe.database.handlers;
 
 public class DbGuildsHandler {
     private String createGuildDataTable = "CREATE TABLE IF NOT EXISTS guild_list(guild_id varchar(36) primary key, guild_name varchar(50), guild_owner_name varchar(25), guild_level int, guild_member_count int, guild_member_limit int, guild_creation_date date)";

@@ -1,4 +1,4 @@
-package at.mtxframe.mtxframe.handlers;
+package at.mtxframe.mtxframe.database.handlers;
 
 public class DbPlayerStatsHandler {
     private String CreateStatTrackerTable = "CREATE TABLE IF NOT EXISTS player_stats(uuid varchar(36) primary key, deaths int, kills int, blocks_broken long, balance double, player_guild varchar(50), last_login date, last_logout date)";

@@ -1,7 +1,7 @@
 package at.mtxframe.mtxframe.utilitys;
 
 import at.mtxframe.mtxframe.database.DatabaseVaults;
-import at.mtxframe.mtxframe.handlers.DbVaultsHandler;
+import at.mtxframe.mtxframe.database.handlers.DbVaultsHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
