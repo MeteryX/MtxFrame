@@ -19,9 +19,8 @@ public class ReportCommand implements TabExecutor {
                 player.sendMessage("Verwendung: /report <Name>");
             }
             else if (args.length == 1) {
-                if (args[0].equalsIgnoreCase("report")) {
                     reportGUI.openMenu(player);
-                }
+
             }
 
         }

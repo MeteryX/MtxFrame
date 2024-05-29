@@ -54,7 +54,7 @@ public class MessageHandler {
     public  void titleMessageDrop(Player receiver, String dropType, String dropMessage){
         //sendTitle Aufbau (title, subTitle, (int) fadeInTime, (int) stayTime, (int) fadeOutTime
         receiver.playSound(receiver.getLocation(),Sound.BLOCK_CONDUIT_ACTIVATE,0.3F,0.1F);
-        receiver.sendTitle(dropType,dropMessage, 20,60,40);
+        receiver.sendTitle(dropType,dropMessage, 10,30,20);
     }
 
     public  void titleMessageAbility(Player receiver, String message, String jobName){
