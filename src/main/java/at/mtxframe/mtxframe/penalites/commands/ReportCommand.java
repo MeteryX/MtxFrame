@@ -16,7 +16,7 @@ public class ReportCommand implements TabExecutor {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             if (args.length == 0) {
-                player.sendMessage("Du musst einen Namen angeben: /report <Name>");
+                player.sendMessage("Verwendung: /report <Name>");
             }
             else if (args.length == 1) {
                 if (args[0].equalsIgnoreCase("report")) {
