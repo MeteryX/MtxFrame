@@ -3,6 +3,8 @@ package at.mtxframe.mtxframe.colors.format;
 import at.mtxframe.mtxframe.colors.ColorAPI;
 import net.md_5.bungee.api.ChatColor;
 
+import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -103,4 +105,60 @@ public class ColorFormat {
         }
         return stringBuilder.toString();
     }
+
+
+
+
+
+
+    public String applyGradientToLine(String text, Color startColor, Color endColor, String pattern) {
+        Pattern customPattern = Pattern.compile(pattern);
+        Matcher matcher = customPattern.matcher(text);
+        StringBuilder stringBuilder = new StringBuilder();
+        int lastIndex = 0;
+
+        while (matcher.find()) {
+            int startIndex = matcher.start();
+            int endIndex = matcher.end();
+
+            if (startIndex > lastIndex) {
+                stringBuilder.append(text.substring(lastIndex, startIndex));
+            }
+
+            String textToGradient = matcher.group();
+            List<ChatColor> gradient = generateGradient(startColor, endColor, textToGradient.length());
+
+            for (int i = 0; i < textToGradient.length(); i++) {
+                stringBuilder.append(gradient.get(i)).append(textToGradient.charAt(i));
+            }
+
+            lastIndex = endIndex;
+        }
+
+        if (lastIndex < text.length()) {
+            stringBuilder.append(text.substring(lastIndex));
+        }
+
+        return stringBuilder.toString();
+    }
+
+    private List<ChatColor> generateGradient(Color start, Color end, int steps) {
+        List<ChatColor> gradient = new ArrayList<>();
+
+        for (int i = 0; i < steps; i++) {
+            float ratio = (float) i / (float) (steps - 1);
+            int red = (int) (start.getRed() * (1 - ratio) + end.getRed() * ratio);
+            int green = (int) (start.getGreen() * (1 - ratio) + end.getGreen() * ratio);
+            int blue = (int) (start.getBlue() * (1 - ratio) + end.getBlue() * ratio);
+
+            gradient.add(ChatColor.of(new Color(red, green, blue)));
+        }
+
+        return gradient;
+    }
+
+
+
+
+
 }

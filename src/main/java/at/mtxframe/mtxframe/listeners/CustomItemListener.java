@@ -46,7 +46,7 @@ public class CustomItemListener implements Listener {
                 if (persistentData.has(ItemKeys.CUSTOM_TEST, PersistentDataType.BOOLEAN)) {
                     //TODO: Random Drop Logik anpassen auf cases um es übersichtlicher zu machen
 
-                    //Check ob das Item einen Random Droptable beinhaltet und ob ein Drop stattfindet
+                    //Check, ob das Item einen Random Droptable beinhaltet und ob ein Drop stattfindet
                     if (persistentData.has(ItemKeys.CI_RANDOM_DROP, PersistentDataType.STRING)) {
                         if (persistentData.has(ItemKeys.CI_DROP_DARK, PersistentDataType.STRING)) {
                             //Todo: Andere droparten abfragen und mehr als nur dark drop implementieren
@@ -60,7 +60,6 @@ public class CustomItemListener implements Listener {
 
                         }
                     }
-
 
                     //Tracker Werte
                     if (persistentData.has(ItemKeys.CI_TRACKER, PersistentDataType.STRING)) {
@@ -108,8 +107,8 @@ public class CustomItemListener implements Listener {
         //Check for random Drop
         public boolean isDrop(){
             Random random = new Random();
-            int randomIndex = random.nextInt(100);
-            if(randomIndex < 20){
+            int randomIndex = random.nextInt(5000);
+            if(randomIndex < 500){
                 return true;
             } else {
                 return false;

@@ -37,3 +37,11 @@ commands:
     usage: /cratestest
     aliases:
       - crate
+  report:
+    usage: /report <Name>
+    aliases:
+      - rep
+  dbds:
+    usage: /dbds
+    aliases:
+      - hurensohn

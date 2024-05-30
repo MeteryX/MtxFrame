@@ -21,7 +21,9 @@ public class ReportCommand implements TabExecutor {
             }
             else if (args.length == 1) {
                 Player playerToReport = Bukkit.getPlayerExact(args[0]);
-                    reportGUI.openMenu(player);
+
+
+                reportGUI.openMenu(player);
 
             }
 

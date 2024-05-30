@@ -3,7 +3,7 @@ package at.mtxframe.mtxframe.customitems;
 public class RandomDropHandler {
 
     String randomDropTest = "CI_RD_TESTDROPS";
-    String darkDrop = "CI_DARK_DROP";
+    String darkDrop = "CI_RD_DARK_DROP";
     String randomDropType = "PLACEHOLDER";
 
     //Getter und Setter für dropType/placeholder
@@ -18,8 +18,12 @@ public class RandomDropHandler {
 
     //Getter und Setter für fixed dropType
 
+    public String getDarkDrop() {
+        return darkDrop;
+    }
 
     public String getRandomDropTest() {
         return randomDropTest;
     }
+
 }

@@ -1,6 +1,9 @@
 package at.mtxframe.mtxframe.crates;
 
 import at.mtxframe.mtxframe.MtxFrame;
+import at.mtxframe.mtxframe.customitems.items.tools.DarkAxe;
+import at.mtxframe.mtxframe.customitems.items.tools.DarkPickaxe;
+import at.mtxframe.mtxframe.customitems.items.tools.DarkSword;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.hologram.line.TextHologramLine;
@@ -12,6 +15,7 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -78,21 +82,57 @@ public class TestCrateCommand implements CommandExecutor {
             int animationDuration = 200; // Run for 200 ticks (10 seconds)
             int itemIndex = 0;
             boolean animationFinished = false;
+            private ArmorStand currentNameStand;
 
             @Override
             public void run() {
                 if (tick >= animationDuration) { // Run for 200 ticks (10 seconds)
                     if (!animationFinished) {
+                        ItemStack wintItem = lootTable.get(stopIndex);
+                        String winName = wintItem.hasItemMeta() && wintItem.getItemMeta().hasDisplayName()
+                                ? wintItem.getItemMeta().getDisplayName()
+                                : wintItem.getType().name(); // Use item type name if display name is not set
+                        setCurrentName(winName);
+                        Location nameLocation = itemStand.getLocation().clone().add(0, 0.6, 0); // Adjust Y coordinate as needed
+                        currentNameStand = (ArmorStand) itemStand.getWorld().spawnEntity(nameLocation, EntityType.ARMOR_STAND);
+                        currentNameStand.setCustomNameVisible(true);
+                        currentNameStand.setCustomName(getCurrentName());
+                        currentNameStand.setGravity(false);
+                        currentNameStand.setVisible(false);
+
                         // Show the final item for 3 seconds before removing
                         itemStand.setHelmet(lootTable.get(stopIndex));
                         chestStand.getLocation().getWorld().spawnParticle(Particle.FIREWORKS_SPARK, chestStand.getLocation(), 80);
-                        player.playSound(player.getLocation(),Sound.ENTITY_FIREWORK_ROCKET_TWINKLE, 1F, 0.5F);
+                        player.playSound(player.getLocation(), Sound.ENTITY_FIREWORK_ROCKET_TWINKLE, 1F, 0.5F);
+
+                        currentNameStand.remove();
                         animationFinished = true;
                         return;
                     } else if (tick >= animationDuration + 60) { // Wait for 3 seconds (60 ticks) after animation finishes
-                        player.getInventory().addItem(lootTable.get(stopIndex));
+                        ItemStack winItem = lootTable.get(stopIndex);
+                        Material itemMaterial = winItem.getType();
+                        if (itemMaterial.equals(Material.NETHERITE_AXE)){
+                            DarkAxe darkAxe = new DarkAxe();
+                            darkAxe.createItem(player);
+                        } else if (itemMaterial.equals(Material.NETHERITE_PICKAXE)) {
+                            DarkPickaxe darkPickaxe = new DarkPickaxe();
+                            darkPickaxe.createItem(player);
+                        } else if (itemMaterial.equals(Material.NETHERITE_SWORD)) {
+                            DarkSword darkSword = new DarkSword();
+                            darkSword.createItem(player);
+                        } else {
+                            player.getInventory().addItem(lootTable.get(stopIndex));
+                        }
+
                         itemStand.remove(); // Remove the rotating item
                         chestStand.remove(); // Remove the floating head
+
+                        // Remove the current name stand if it exists
+                        if (currentNameStand != null) {
+                            currentNameStand.remove();
+                            currentNameStand = null;
+                        }
+
                         cancel();
                         return;
                     }
@@ -106,15 +146,20 @@ public class TestCrateCommand implements CommandExecutor {
                             : currentItem.getType().name(); // Use item type name if display name is not set
                     setCurrentName(itemName);
                     itemIndex = (itemIndex + 1) % lootTable.size(); // Loop through items
-                    player.playSound(player.getLocation(),Sound.BLOCK_NOTE_BLOCK_BELL,0.8F,0.8F);
-                    //New Name Location
-                    //Naming armorstand
-                    Location nameLocation = itemStand.getLocation().clone().add(0, 1, 0); // Adjust Y coordinate as needed
-                    ArmorStand nameStand = (ArmorStand) itemStand.getWorld().spawnEntity(nameLocation, EntityType.ARMOR_STAND);
-                    nameStand.setCustomNameVisible(true);
-                    nameStand.setCustomName(getCurrentName());
-                    nameStand.setGravity(false);
-                    nameStand.setVisible(false);
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 0.8F, 0.8F);
+
+                    // Remove the current name stand if it exists
+                    if (currentNameStand != null) {
+                        currentNameStand.remove();
+                    }
+
+                    // Naming armorstand
+                    Location nameLocation = itemStand.getLocation().clone().add(0, 0.6, 0); // Adjust Y coordinate as needed
+                    currentNameStand = (ArmorStand) itemStand.getWorld().spawnEntity(nameLocation, EntityType.ARMOR_STAND);
+                    currentNameStand.setCustomNameVisible(true);
+                    currentNameStand.setCustomName(getCurrentName());
+                    currentNameStand.setGravity(false);
+                    currentNameStand.setVisible(false);
                 }
                 tick++;
             }
@@ -129,7 +174,9 @@ public class TestCrateCommand implements CommandExecutor {
         lootTable.add(new ItemStack(Material.DIAMOND));
         lootTable.add(new ItemStack(Material.GOLDEN_APPLE));
         lootTable.add(new ItemStack(Material.ENCHANTED_BOOK));
-        lootTable.add(new ItemStack(Material.IRON_SWORD));
+        lootTable.add(new ItemStack(Material.NETHERITE_AXE));
+        lootTable.add(new ItemStack(Material.NETHERITE_SWORD));
+        lootTable.add(new ItemStack(Material.NETHERITE_PICKAXE));
         lootTable.add(new ItemStack(Material.EMERALD_BLOCK));
         return lootTable;
     }
@@ -143,13 +190,13 @@ public class TestCrateCommand implements CommandExecutor {
                     return;
                 }
                 // Update chest stand position to follow the player's movement
-                Location newChestLocation = player.getLocation().add(player.getLocation().getDirection().multiply(3));
+                Location newChestLocation = player.getLocation().add(player.getLocation().getDirection().multiply(5));
                 newChestLocation.setYaw(player.getLocation().getYaw());
                 newChestLocation.setPitch(player.getLocation().getPitch());
                 newChestLocation.add(0, 0, 0); // Adjust height
                 chestStand.teleport(newChestLocation);
 
-                Location newItemLocation = chestStand.getLocation().add(0, 0.8, 0); // Adjust height for the item
+                Location newItemLocation = chestStand.getLocation().add(0, 0.5, 0); // Adjust height for the item
                 itemStand.teleport(newItemLocation);
             }
         }.runTaskTimer(plugin, 0, 1); // Run every tick

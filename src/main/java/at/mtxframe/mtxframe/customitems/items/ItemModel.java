@@ -46,19 +46,18 @@ public class ItemModel implements Serializable {
 
     }
 
-    public void createItemTest(Player player, Integer amount){
+    public void createItemTest(Player player, Integer amount) {
 
         persistentDataContainer.set(ItemKeys.CUSTOM_TEST, PersistentDataType.BOOLEAN, true);
-        if (isStatTracker){
-            persistentDataContainer.set(ItemKeys.CI_TRACKER_VALUE,PersistentDataType.INTEGER,0);
+        if (isStatTracker) {
+            persistentDataContainer.set(ItemKeys.CI_TRACKER_VALUE, PersistentDataType.INTEGER, 0);
             String woodTracker = "CI_WOOD_TRACKER";
             String oreTracker = "CI_ORE_TRACKER";
             String farmTracker = "CI_FARM_TRACKER";
             String fishTracker = "CI_FISH_TRACKER";
-            switch (trackedStat.getTrackingType()){
-
-                case "CI_WOOD_TRACKER" :
-                    persistentDataContainer.set(ItemKeys.CI_TRACKER,PersistentDataType.STRING,woodTracker);
+            switch (trackedStat.getTrackingType()) {
+                case "CI_WOOD_TRACKER":
+                    persistentDataContainer.set(ItemKeys.CI_TRACKER, PersistentDataType.STRING, woodTracker);
                     customItem.setAmount(amount);
                     customItem.getItemMeta().setDisplayName(itemName);
                     LorePresets lorePresets = new LorePresets();
@@ -69,10 +68,12 @@ public class ItemModel implements Serializable {
                     customItem.getItemMeta().setDisplayName(itemName);
                     customItem.setItemMeta(itemMeta);
                     player.getInventory().addItem(customItem);
+                    System.out.println("Custom item: " + customItem.toString());
+                    System.out.println("Custom item meta: " + itemMeta.toString());
 
                     break;
-                case "CI_ORE_TRACKER" :
-                    persistentDataContainer.set(ItemKeys.CI_TRACKER,PersistentDataType.STRING,oreTracker);
+                case "CI_ORE_TRACKER":
+                    persistentDataContainer.set(ItemKeys.CI_TRACKER, PersistentDataType.STRING, oreTracker);
                     customItem.setAmount(amount);
                     customItem.getItemMeta().setDisplayName(itemName);
                     lorePresets = new LorePresets();
@@ -86,7 +87,7 @@ public class ItemModel implements Serializable {
 
                     break;
                 case "CI_FARM_TRACKER":
-                    persistentDataContainer.set(ItemKeys.CI_TRACKER,PersistentDataType.STRING,farmTracker);
+                    persistentDataContainer.set(ItemKeys.CI_TRACKER, PersistentDataType.STRING, farmTracker);
                     customItem.setAmount(amount);
                     customItem.getItemMeta().setDisplayName(itemName);
                     lorePresets = new LorePresets();
@@ -100,7 +101,7 @@ public class ItemModel implements Serializable {
 
                     break;
                 case "CI_FISH_TRACKER":
-                    persistentDataContainer.set(ItemKeys.CI_TRACKER,PersistentDataType.STRING,fishTracker);
+                    persistentDataContainer.set(ItemKeys.CI_TRACKER, PersistentDataType.STRING, fishTracker);
                     customItem.setAmount(amount);
                     customItem.getItemMeta().setDisplayName(itemName);
                     lorePresets = new LorePresets();
@@ -114,19 +115,34 @@ public class ItemModel implements Serializable {
 
                     break;
             }
-
-
-
-
         }
-        /*
-        customItem.setAmount(amount);
-        customItem.getItemMeta().setDisplayName(itemName);
-        customItem.setItemMeta(itemMeta);
-        player.getInventory().addItem(customItem);
-         */
+        else if (hasRandomDrops) {
+            String darkDrop = "CI_RD_DARK_DROP";
+            if (randomDrops.getRandomDropType().equals("CI_RD_DARK_DROP")) {
+                LorePresets lorePresets = new LorePresets();
+                ArrayList<String> lore = lorePresets.getDarkDropLore();
+                persistentDataContainer.set(ItemKeys.CI_DROP_DARK, PersistentDataType.STRING, darkDrop);
+                itemMeta.setLore(lore);
 
+                customItem.setAmount(amount);
+                customItem.getItemMeta().setDisplayName(itemName);
+                customItem.setItemMeta(itemMeta);
+
+                // Debugging output
+                player.sendMessage(ChatColor.GREEN + "Attempting to add Dark Sword to inventory...");
+                System.out.println("Custom item: " + customItem.toString());
+                System.out.println("Custom item meta: " + itemMeta.toString());
+
+                // Add item to player's inventory
+                player.getInventory().addItem(customItem);
+
+                player.sendMessage(ChatColor.GREEN + "Dark Sword added to inventory.");
+                // Handle other random drop types if needed...
+            }
         }
+
+
+    }
 
 
 

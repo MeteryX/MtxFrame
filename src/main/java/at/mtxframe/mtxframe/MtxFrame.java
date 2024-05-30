@@ -7,6 +7,7 @@ import at.mtxframe.mtxframe.crates.TestCrateCommand;
 import at.mtxframe.mtxframe.database.DatabaseConnection;
 import at.mtxframe.mtxframe.database.DatabasePlayerStats;
 import at.mtxframe.mtxframe.debugcommands.DebugCustomItem;
+import at.mtxframe.mtxframe.debugcommands.DebugDS;
 import at.mtxframe.mtxframe.economy.BalanceHandler;
 import at.mtxframe.mtxframe.files.ChatFilterConfig;
 import at.mtxframe.mtxframe.gui.ScoreBoard;
@@ -15,6 +16,7 @@ import at.mtxframe.mtxframe.listeners.JoinQuitListener;
 import at.mtxframe.mtxframe.models.PlayerStatsModel;
 
 import at.mtxframe.mtxframe.penalites.ChatListener;
+import at.mtxframe.mtxframe.penalites.commands.ReportCommand;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import net.milkbowl.vault.economy.Economy;
@@ -91,6 +93,8 @@ public final class MtxFrame extends JavaPlugin {
         getCommand("itemtest").setExecutor(new DebugCustomItem());
         getCommand("colorapi").setExecutor(new ColorCommands(this));
         getCommand("cratetest").setExecutor(new TestCrateCommand(this));
+        getCommand("report").setExecutor(new ReportCommand());
+        getCommand("dbds").setExecutor(new DebugDS());
 
         //In Memory Initialisierung
         this.localPlayerStats = new HashMap<>();
