@@ -114,16 +114,21 @@ public class TestCrateCommand implements CommandExecutor {
                         if (itemMaterial.equals(Material.NETHERITE_AXE)){
                             DarkAxe darkAxe = new DarkAxe();
                             darkAxe.createItem(player);
+                            currentNameStand.remove();
                         } else if (itemMaterial.equals(Material.NETHERITE_PICKAXE)) {
                             DarkPickaxe darkPickaxe = new DarkPickaxe();
                             darkPickaxe.createItem(player);
+                            currentNameStand.remove();
                         } else if (itemMaterial.equals(Material.NETHERITE_SWORD)) {
                             DarkSword darkSword = new DarkSword();
                             darkSword.createItem(player);
+                            currentNameStand.remove();
                         } else {
                             player.getInventory().addItem(lootTable.get(stopIndex));
+                            currentNameStand.remove();
                         }
 
+                        currentNameStand.remove();
                         itemStand.remove(); // Remove the rotating item
                         chestStand.remove(); // Remove the floating head
 
@@ -155,9 +160,9 @@ public class TestCrateCommand implements CommandExecutor {
 
                     // Naming armorstand
                     Location nameLocation = itemStand.getLocation().clone().add(0, 0.6, 0); // Adjust Y coordinate as needed
-                    currentNameStand = (ArmorStand) itemStand.getWorld().spawnEntity(nameLocation, EntityType.ARMOR_STAND);
+                    currentNameStand = (ArmorStand) itemStand.getWorld().spawnEntity(nameLocation,EntityType.ARMOR_STAND);
                     currentNameStand.setCustomNameVisible(true);
-                    currentNameStand.setCustomName(getCurrentName());
+                    currentNameStand.setCustomName(ChatColor.translateAlternateColorCodes('&', "&4" + getCurrentName()));
                     currentNameStand.setGravity(false);
                     currentNameStand.setVisible(false);
                 }
