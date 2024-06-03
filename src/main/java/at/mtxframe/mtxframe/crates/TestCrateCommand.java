@@ -105,7 +105,6 @@ public class TestCrateCommand implements CommandExecutor {
                         chestStand.getLocation().getWorld().spawnParticle(Particle.FIREWORKS_SPARK, chestStand.getLocation(), 80);
                         player.playSound(player.getLocation(), Sound.ENTITY_FIREWORK_ROCKET_TWINKLE, 1F, 0.5F);
 
-                        currentNameStand.remove();
                         animationFinished = true;
                         return;
                     } else if (tick >= animationDuration + 60) { // Wait for 3 seconds (60 ticks) after animation finishes

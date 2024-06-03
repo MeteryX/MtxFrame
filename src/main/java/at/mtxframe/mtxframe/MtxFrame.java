@@ -17,8 +17,6 @@ import at.mtxframe.mtxframe.models.PlayerStatsModel;
 
 import at.mtxframe.mtxframe.penalites.ChatListener;
 import at.mtxframe.mtxframe.penalites.commands.ReportCommand;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
