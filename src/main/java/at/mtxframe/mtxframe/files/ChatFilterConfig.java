@@ -36,7 +36,7 @@ public class ChatFilterConfig {
         try {
             chatfilterFile.save(file);
         } catch (IOException e){
-            System.out.println("ChatFilterConfig konnt enicht gespeichert werden.");
+            System.out.println("ChatFilterConfig konnte nicht gespeichert werden.");
         }
     }
 

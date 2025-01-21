@@ -32,10 +32,10 @@ public class TestCrateCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         hologramMap = new HashMap<Integer, Hologram>();
-            if (!(sender instanceof Player)) {
-                sender.sendMessage("Only players can open crates!");
-                return true;
-            }
+        if (!(sender instanceof Player)) {
+            sender.sendMessage("Only players can open crates!");
+            return true;
+        }
         Player player = (Player) sender;
 
 
@@ -102,10 +102,9 @@ public class TestCrateCommand implements CommandExecutor {
 
                         // Show the final item for 3 seconds before removing
                         itemStand.setHelmet(lootTable.get(stopIndex));
-                        chestStand.getLocation().getWorld().spawnParticle(Particle.FIREWORKS_SPARK, chestStand.getLocation(), 80);
+                        chestStand.getLocation().getWorld().spawnParticle(Particle.DRAGON_BREATH, chestStand.getLocation(), 80);
                         player.playSound(player.getLocation(), Sound.ENTITY_FIREWORK_ROCKET_TWINKLE, 1F, 0.5F);
 
-                        currentNameStand.remove();
                         animationFinished = true;
                         return;
                     } else if (tick >= animationDuration + 60) { // Wait for 3 seconds (60 ticks) after animation finishes

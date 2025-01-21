@@ -6,6 +6,10 @@ import at.mtxframe.mtxframe.colors.signs.SignColorListener;
 import at.mtxframe.mtxframe.crates.TestCrateCommand;
 import at.mtxframe.mtxframe.database.DatabaseConnection;
 import at.mtxframe.mtxframe.database.DatabasePlayerStats;
+import at.mtxframe.mtxframe.database.handlers.DbClaimsHandler;
+import at.mtxframe.mtxframe.database.handlers.DbGuildsHandler;
+import at.mtxframe.mtxframe.database.handlers.DbPlayerStatsHandler;
+import at.mtxframe.mtxframe.database.handlers.DbVaultsHandler;
 import at.mtxframe.mtxframe.debugcommands.DebugCustomItem;
 import at.mtxframe.mtxframe.debugcommands.DebugDS;
 import at.mtxframe.mtxframe.economy.BalanceHandler;
@@ -17,8 +21,6 @@ import at.mtxframe.mtxframe.models.PlayerStatsModel;
 
 import at.mtxframe.mtxframe.penalites.ChatListener;
 import at.mtxframe.mtxframe.penalites.commands.ReportCommand;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -46,6 +48,11 @@ public final class MtxFrame extends JavaPlugin {
     //ColorAPi
     public ColorAPI colorAPI;
 
+    //Database Initializer
+    DbPlayerStatsHandler dbPlayerStats = new DbPlayerStatsHandler();
+    DbGuildsHandler dbGuilds = new DbGuildsHandler();
+    DbClaimsHandler dbClaims = new DbClaimsHandler();
+    DbVaultsHandler dbVaults = new DbVaultsHandler();
 
 
     @Override
@@ -56,6 +63,7 @@ public final class MtxFrame extends JavaPlugin {
         getConfig().options().copyDefaults();
         saveDefaultConfig();
 
+        //Database Connection
         this.database = new DatabaseConnection(
                 getConfig().getString("database.host"),
                 getConfig().getString("database.port"),
@@ -68,6 +76,16 @@ public final class MtxFrame extends JavaPlugin {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        //Database Creation
+        try {
+            this.database.initializeDatabase(dbPlayerStats.createStatTrackerTable());
+            this.database.initializeDatabase(dbGuilds.getCreateGuildDataTable());
+            this.database.initializeDatabase(dbClaims.getCreateGuildClaimTable());
+            this.database.initializeDatabase(dbVaults.getCreateGuildVaultTable());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
         //Penalties
         ChatFilterConfig.setup();
         ChatFilterConfig.get().options().copyDefaults(true);
@@ -77,7 +95,6 @@ public final class MtxFrame extends JavaPlugin {
         colorAPI = new ColorAPI(this);
         getServer().getServicesManager().register(ColorAPI.class, colorAPI, this, ServicePriority.High);
         //HolographicDisplays
-        //ProtocolLib
 
         //Tasks
         //Scoreboard task
@@ -92,9 +109,8 @@ public final class MtxFrame extends JavaPlugin {
         //Command registration
         getCommand("itemtest").setExecutor(new DebugCustomItem());
         getCommand("colorapi").setExecutor(new ColorCommands(this));
-        getCommand("cratetest").setExecutor(new TestCrateCommand(this));
         getCommand("report").setExecutor(new ReportCommand());
-        getCommand("dbds").setExecutor(new DebugDS());
+        getCommand("cratetest").setExecutor(new TestCrateCommand(this));
 
         //In Memory Initialisierung
         this.localPlayerStats = new HashMap<>();

@@ -4,7 +4,6 @@ import java.util.Date;
 
 public class PlayerJobStatModel {
     String uuid;
-    double balance;
     int miningLevel;
     double miningXP;
     int farmerLevel;

@@ -21,6 +21,7 @@ import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class BalanceHandler{
 
@@ -35,18 +36,20 @@ public class BalanceHandler{
 
     String economyUnit = " ⛁ ";
     //BUFFERS UND TIMER
-    private HashMap<UUID, Double> balanceBuffer = new HashMap<>();
-    private HashMap<UUID, Double> xPBuffer = new HashMap<>();
-    public static HashMap<UUID, Long> lastBlockBreakTime = new HashMap<>();
-    public HashMap<UUID, Long> getLastBlockBreakTime() {
+    private ConcurrentHashMap<UUID, Double> balanceBuffer = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<UUID, Double> xPBuffer = new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<UUID, Long> lastBlockBreakTime = new ConcurrentHashMap<>();
+
+
+    //Last Block broken
+    public ConcurrentHashMap<UUID, Long> getLastBlockBreakTime() {
         return lastBlockBreakTime;
     }
-
-    //VAULT
-
-    public void setLastBlockBreakTime(HashMap<UUID, Long> lastBlockBreakTime) {
+    public void setLastBlockBreakTime(ConcurrentHashMap<UUID, Long> lastBlockBreakTime) {
         BalanceHandler.lastBlockBreakTime = lastBlockBreakTime;
     }
+
+
 
     //Adding Money to a Player, list of Players, or all Players
     public void addMoneyPlayer(Player player,double amount) throws SQLException {
@@ -139,6 +142,7 @@ public class BalanceHandler{
                     //TODO: Title Messages für levelUps
                     player.sendMessage("Du bist im Miner Level gestiegen! Aktuelles Level: " + localJobStats.getMiningLevel());
                 }
+                lastBlockBreakTime.put(playerId,System.currentTimeMillis());
 
                 break;
             }
@@ -154,6 +158,8 @@ public class BalanceHandler{
                     //TODO: Title Messages für levelUps
                     player.sendMessage("Du bist im Farmer Level gestiegen! Aktuelles Level: " + localJobStats.getFarmerLevel());
                 }
+                lastBlockBreakTime.put(playerId,System.currentTimeMillis());
+
 
                 break;
             }
@@ -169,6 +175,7 @@ public class BalanceHandler{
                     //TODO: Title Messages für levelUps
                     player.sendMessage("Du bist im Jäger Level gestiegen! Aktuelles Level: " + localJobStats.getHunterLevel());
                 }
+                lastBlockBreakTime.put(playerId,System.currentTimeMillis());
 
                 break;
             }
@@ -184,6 +191,7 @@ public class BalanceHandler{
                     //TODO: Title Messages für levelUps
                     player.sendMessage("Du bist im Holzfäller Level gestiegen! Aktuelles Level: " + localJobStats.getWoodcutterLevel());
                 }
+                lastBlockBreakTime.put(playerId,System.currentTimeMillis());
 
                 break;
             }
@@ -199,6 +207,7 @@ public class BalanceHandler{
                     //TODO: Title Messages für levelUps
                     player.sendMessage("Du bist im Fischer Level gestiegen! Aktuelles Level: " + localJobStats.getFisherLevel());
                 }
+                lastBlockBreakTime.put(playerId,System.currentTimeMillis());
                 break;
 
             }
@@ -208,7 +217,6 @@ public class BalanceHandler{
         localPlayerStats.put(player,stats);
         plugin.setLocalPlayerStats(localPlayerStats);
         msgHandler.actionBarMessage(player, ChatColor.GREEN + "+" + formattedAmount + ChatColor.GOLD + economyUnit + ChatColor.GRAY + " | " + ChatColor.GOLD + formattedBalance + ChatColor.GOLD + economyUnit + ChatColor.GRAY + " | " + ChatColor.BLUE + formattedXp + " XP" + ChatColor.GRAY + " | " + ChatColor.DARK_PURPLE + formattedNeededXP + "%");
-
 
 
     }

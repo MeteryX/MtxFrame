@@ -108,7 +108,7 @@ public class CustomItemListener implements Listener {
         public boolean isDrop(){
             Random random = new Random();
             int randomIndex = random.nextInt(5000);
-            if(randomIndex < 500){
+            if(randomIndex < 50){
                 return true;
             } else {
                 return false;
